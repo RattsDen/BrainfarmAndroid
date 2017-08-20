@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.data;
 
 import com.google.gson.annotations.SerializedName;
 

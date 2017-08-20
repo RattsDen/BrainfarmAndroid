@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.serviceclient;
 
 /**
  * Exception class used to contain information on Faults thrown by the Brainfarm Service

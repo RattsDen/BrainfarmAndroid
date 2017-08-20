@@ -1,14 +1,12 @@
-package ca.brainfarm;
+package ca.brainfarm.serviceclient;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.LongSerializationPolicy;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -18,9 +16,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,7 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * This class wraps the response from the Brainfarm service.
  */
 
-public class ServiceResponse {
+class ServiceResponse {
 
     public int responseCode;
     private String responseBody;
@@ -119,14 +115,24 @@ public class ServiceResponse {
         }
 
         private Calendar parseJsonDate(String dateString) {
-            int begin = 6;
-            int end = dateString.length() - 7;
-            dateString = dateString.substring(begin, end);
-            long millis = Long.parseLong(dateString);
+            // TODO: JSON date parsing is not working correctly
+
+            String millisString = dateString.substring(6, dateString.length() - 7);
+            long millis = Long.parseLong(millisString);
+
+            String timezoneString = dateString.substring(dateString.length() - 7, dateString.length() - 4);
+            int timezoneOffset;
+            if (timezoneString.startsWith("+")) {
+                timezoneOffset = Integer.parseInt(timezoneString.substring(1));
+            } else {
+                timezoneOffset = Integer.parseInt(timezoneString);
+            }
 
             Calendar cal = Calendar.getInstance();
             cal.set(1970, Calendar.JANUARY, 1);
             cal.setTimeInMillis(cal.getTimeInMillis() + millis);
+
+            //cal.add(Calendar.HOUR, timezoneOffset);
 
             //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             //String ds = sdf.format(cal.getTime());

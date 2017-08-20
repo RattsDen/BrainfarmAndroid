@@ -1,13 +1,13 @@
 package ca.brainfarm;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import ca.brainfarm.serviceclient.FaultHandler;
+import ca.brainfarm.serviceclient.ServiceCall;
+import ca.brainfarm.serviceclient.ServiceFaultException;
+import ca.brainfarm.serviceclient.SuccessHandler;
 
 public class RegisterActivity extends BaseBrainfarmActivity {
 
@@ -29,39 +29,28 @@ public class RegisterActivity extends BaseBrainfarmActivity {
 
     public void btnRegisterClicked(View view) {
         // TODO: check that password fields match
-        sendRegistrationRequest();
+        registerUser();
     }
 
-    private void sendRegistrationRequest() {
-        JSONObject args = new JSONObject();
-        try {
-            args.put("username", txtUsername.getText().toString());
-            args.put("password", txtPassword.getText().toString());
-            args.put("email", txtEmail.getText().toString());
-        } catch (JSONException ignored) {} // It is impossible to enter this block. Thanks, Java.
+    private void registerUser() {
+        String username = txtUsername.getText().toString();
+        String password = txtPassword.getText().toString();
+        String email = txtEmail.getText().toString();
 
-        ServiceRequest req = new ServiceRequest("RegisterUser", args) {
+        ServiceCall registerUser = new ServiceCall("RegisterUser");
+        registerUser.addArgument("username", username);
+        registerUser.addArgument("password", password);
+        registerUser.addArgument("email", email);
+        registerUser.execute(Boolean.class, new SuccessHandler<Boolean>() {
             @Override
-            protected void onComplete(ServiceResponse response) {
-
-                try {
-                    handleRegistrationResponse(response.getResponseObject(Boolean.class));
-                } catch (ServiceFaultException ex) {
-                    Toast.makeText(RegisterActivity.this,
-                            ex.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                } catch (Exception ex) {
-                    Toast.makeText(RegisterActivity.this,
-                            "An unexpected error occurred",
-                            Toast.LENGTH_LONG).show();
-                }
+            public void handleSuccess(Boolean result) {
 
             }
-        };
-        req.execute();
-    }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
 
-    private void handleRegistrationResponse(boolean success) {
-
+            }
+        });
     }
 }

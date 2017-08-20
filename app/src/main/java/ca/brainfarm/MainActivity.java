@@ -1,10 +1,12 @@
 package ca.brainfarm;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.json.JSONObject;
+import ca.brainfarm.serviceclient.FaultHandler;
+import ca.brainfarm.serviceclient.ServiceCall;
+import ca.brainfarm.serviceclient.ServiceFaultException;
+import ca.brainfarm.serviceclient.SuccessHandler;
 
 public class MainActivity extends BaseBrainfarmActivity {
 
@@ -16,27 +18,19 @@ public class MainActivity extends BaseBrainfarmActivity {
         // ALL OF THIS IS TESTING STUFF
         // PLEASE IGNORE
 
-
-        ServiceResponse resp = new ServiceResponse();
-        resp.responseCode = 200;
-        resp.setResponseBody("{\"CreationDate\": \"/Date(1493264634133-0400)/\",\"Email\": \"java@mail.com\",\"UserID\": 2008,\"Username\": \"Java\"}");
-        try {
-            User user = resp.getResponseObject(User.class);
-            Log.e("ASD", user.username);
-        } catch (Exception ex) {
-            Log.e("ASD", ex.getMessage());
-        }
-        resp.setResponseBody("<Fault xmlns=\"http://schemas.microsoft.com/ws/2005/05/envelope/none\"><Code></Code><Reason><Text xml:lang=\"en-CA\">Invalid email address</Text></Reason></Fault>");
-        //ServiceFaultException ex = resp.getException();
-
-        JSONObject args = new JSONObject();
-
-        ServiceRequest req = new ServiceRequest("") {
+        ServiceCall timestampCall = new ServiceCall("GetTimestamp");
+        timestampCall.execute(String.class, new SuccessHandler<String>() {
             @Override
-            protected void onComplete(ServiceResponse response) {
-                Log.d("COMPLETE", "" + response.responseCode);
+            public void handleSuccess(String result) {
+                Log.i("Test", result);
             }
-        };
-        //req.execute();
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+
+            }
+        });
+
+
     }
 }
