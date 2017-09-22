@@ -18,4 +18,10 @@
     <string name="menu_comment_bookmark">Bookmark</string>
     <string name="menu_comment_unbookmark">Unbookmark</string>
 
+    <string name="button_register">Register</string>
+    <string name="button_login">Login</string>
+    <string name="button_wait">Loading. Please wait…</string>
+
+    <string name="warn_password_match">Password fields must match</string>
+
 </resources>
