@@ -16,7 +16,7 @@ public class Comment {
     @SerializedName("UserID")
     public int userID;
     @SerializedName("ParentCommentID")
-    public int parentCommentID;
+    public Integer parentCommentID;
     @SerializedName("CreationDate")
     public Calendar creationDate;
     @SerializedName("EditedDate")

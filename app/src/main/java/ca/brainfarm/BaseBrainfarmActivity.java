@@ -22,7 +22,7 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Create the menu from xml
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu_logged_out, menu);
         return true;
     }
 
@@ -35,6 +35,13 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
                     Intent intent = new Intent(this, RegisterActivity.class);
                     startActivity(intent);
                 }
+                break;
+
+            case R.id.menu_project:
+                // TODO: remove hardcoded navigation
+                Intent intent = new Intent(this, ProjectActivity.class);
+                intent.putExtra("projectID", 2);
+                startActivity(intent);
                 break;
         }
         return true;

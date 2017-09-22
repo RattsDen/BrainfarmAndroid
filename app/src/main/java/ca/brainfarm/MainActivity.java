@@ -15,22 +15,5 @@ public class MainActivity extends BaseBrainfarmActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ALL OF THIS IS TESTING STUFF
-        // PLEASE IGNORE
-
-        ServiceCall timestampCall = new ServiceCall("GetTimestamp");
-        timestampCall.execute(String.class, new SuccessHandler<String>() {
-            @Override
-            public void handleSuccess(String result) {
-                Log.i("Test", result);
-            }
-        }, new FaultHandler() {
-            @Override
-            public void handleFault(ServiceFaultException ex) {
-
-            }
-        });
-
-
     }
 }

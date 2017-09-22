@@ -3,4 +3,19 @@
 
     <string name="service_endpoint_url">http://10.0.2.2:59006/BrainfarmService.svc/ajax/</string>
     <string name="title_activity_register">RegisterActivity</string>
+
+    <string name="ribbon_project">PROJECT</string>
+    <string name="ribbon_synth">SYNTHESIS</string>
+    <string name="ribbon_spec">SPECIFICATION</string>
+    <string name="ribbon_contrib">CONTRIBUTION</string>
+
+    <string name="menu_login">Login</string>
+    <string name="menu_register">Register</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_account">Manage Account</string>
+
+    <string name="menu_comment_reply">Reply</string>
+    <string name="menu_comment_bookmark">Bookmark</string>
+    <string name="menu_comment_unbookmark">Unbookmark</string>
+
 </resources>

@@ -17,7 +17,6 @@ public class BrainfarmApplication extends Application {
 
         // Set the URL for the service endpoint.
         // It's done from here so it can be grabbed from strings.xml.
-        ServiceRequest.baseURL = getString(R.string.service_endpoint_url);
         ServiceCall.defaultBaseURL = getString(R.string.service_endpoint_url);
     }
 
