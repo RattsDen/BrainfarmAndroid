@@ -22,19 +22,30 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Create the menu from xml
-        getMenuInflater().inflate(R.menu.menu_logged_out, menu);
+        // Menu shown should depend on whether user is logged in or not
+        if (UserSessionManager.getInstance().getLoginToken() == null) {
+            // Logged out
+            getMenuInflater().inflate(R.menu.menu_logged_out, menu);
+        } else {
+            // Logged in
+            getMenuInflater().inflate(R.menu.menu_logged_in, menu);
+        }
+
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: handle menu action item presses
         switch (item.getItemId()) {
+            case R.id.menu_login:
+                loginMenuItemPressed();
+                break;
+
+            case R.id.menu_logout:
+                logoutMenuItemPressed();
+                break;
+
             case R.id.menu_register:
-                if (!(this instanceof RegisterActivity)) { // If not already on Register activity
-                    // Open Register activity
-                    Intent intent = new Intent(this, RegisterActivity.class);
-                    startActivity(intent);
-                }
+                registerMenuItemPressed();
                 break;
 
             case R.id.menu_project:
@@ -45,6 +56,36 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    protected void loginMenuItemPressed() {
+        if (!(this instanceof LoginActivity)) { // If not already on login activity
+            // Open login activity
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    protected void logoutMenuItemPressed() {
+        // Clear stored session token
+        UserSessionManager.getInstance().setLoginToken(null);
+        // Go to main activity
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Clear the activity stack
+        if (this instanceof MainActivity) {
+            // Don't animate the activity transition if we're already on the main activity
+            // It can look strange otherwise
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        }
+        startActivity(intent);
+    }
+
+    protected void registerMenuItemPressed() {
+        if (!(this instanceof RegisterActivity)) { // If not already on Register activity
+            // Open Register activity
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
 }

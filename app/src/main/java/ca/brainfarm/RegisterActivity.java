@@ -1,5 +1,6 @@
 package ca.brainfarm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -61,8 +62,13 @@ public class RegisterActivity extends BaseBrainfarmActivity {
         registerUser.execute(User.class, new SuccessHandler<User>() {
             @Override
             public void handleSuccess(User result) {
+                // Show message
                 String message = "Registration Successful!";
                 Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                // Go to login activity
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                intent.putExtra("username", result.username); // Pass new user's username to login activity
+                startActivity(intent);
             }
         }, new FaultHandler() {
             @Override
