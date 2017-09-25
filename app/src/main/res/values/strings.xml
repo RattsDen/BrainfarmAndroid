@@ -13,6 +13,7 @@
     <string name="menu_register">Register</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_account">Manage Account</string>
+    <string name="menu_create_project">Create Project</string>
 
     <string name="menu_comment_reply">Reply</string>
     <string name="menu_comment_bookmark">Bookmark</string>
@@ -22,6 +23,7 @@
     <string name="button_login">Login</string>
     <string name="button_submit">Submit</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_create_project">Create Project</string>
     <string name="button_wait">Loading. Please wait…</string>
 
     <string name="warn_password_match">Password fields must match</string>

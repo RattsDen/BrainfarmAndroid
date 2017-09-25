@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.ProjectActivity" />
-        <activity android:name=".activities.LoginActivity"></activity>
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.CreateProjectActivity"></activity>
     </application>
 
 </manifest>

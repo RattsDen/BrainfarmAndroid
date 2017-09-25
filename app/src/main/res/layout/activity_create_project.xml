@@ -6,46 +6,46 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     style="@style/AppActivityLayoutStyle"
-    tools:context="ca.brainfarm.activities.LoginActivity">
+    tools:context="ca.brainfarm.activities.CreateProjectActivity">
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Login"
+        android:text="Create Project"
         android:textSize="24dp" />
 
     <EditText
-        android:id="@+id/txtUsername"
+        android:id="@+id/txtProjectTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="fill_horizontal"
         android:ems="10"
-        android:hint="Username"
+        android:hint="Title"
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/txtPassword"
+        android:id="@+id/txtProjectTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        android:hint="Tags"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/txtProjectDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Project description..."
+        android:inputType="textMultiLine" />
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnCreateProject"
         style="@style/AppButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/button_login" />
+        android:text="@string/button_create_project" />
 
-    <Button
-        android:id="@+id/btnRegister"
-        style="@style/AppButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/button_register" />
 </LinearLayout>

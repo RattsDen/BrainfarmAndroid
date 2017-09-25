@@ -51,6 +51,10 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
                 registerMenuItemPressed();
                 break;
 
+            case R.id.menu_create_project:
+                createProjectMenuItemPressed();
+                break;
+
             case R.id.menu_project:
                 // TODO: remove hardcoded navigation
                 Intent intent = new Intent(this, ProjectActivity.class);
@@ -87,6 +91,14 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
         if (!(this instanceof RegisterActivity)) { // If not already on Register activity
             // Open Register activity
             Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    protected void createProjectMenuItemPressed() {
+        if (!(this instanceof CreateProjectActivity)) { // If not already on Create Project activity
+            // Open Create Project activity
+            Intent intent = new Intent(this, CreateProjectActivity.class);
             startActivity(intent);
         }
     }

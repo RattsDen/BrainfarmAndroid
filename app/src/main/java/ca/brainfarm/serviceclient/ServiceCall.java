@@ -3,6 +3,7 @@ package ca.brainfarm.serviceclient;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,9 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 
 /**
  * This class is used to make calls to the Brainfarm service.
@@ -38,6 +41,21 @@ public class ServiceCall {
     public void addArgument(String name, Object data) {
         try {
             arguments.put(name, data);
+        } catch (JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void addArgument(String name, Object[] array) {
+        JSONArray jsonArray = null;
+        if (array != null) {
+            jsonArray = new JSONArray();
+            for (Object o : array) {
+                jsonArray.put(o);
+            }
+        }
+        try {
+            arguments.put(name, jsonArray);
         } catch (JSONException ex) {
             throw new RuntimeException(ex);
         }
