@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     style="@style/AppActivityLayoutStyle"
-    tools:context="ca.brainfarm.RegisterActivity">
+    tools:context="ca.brainfarm.activities.RegisterActivity">
 
     <TextView
         android:id="@+id/textView2"

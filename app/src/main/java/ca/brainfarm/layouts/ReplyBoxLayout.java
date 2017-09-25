@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.layouts;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import ca.brainfarm.R;
 import ca.brainfarm.data.Comment;
 
 /**

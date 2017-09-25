@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ca.brainfarm.R;
+import ca.brainfarm.UserSessionManager;
 import ca.brainfarm.serviceclient.FaultHandler;
 import ca.brainfarm.serviceclient.ServiceCall;
 import ca.brainfarm.serviceclient.ServiceFaultException;

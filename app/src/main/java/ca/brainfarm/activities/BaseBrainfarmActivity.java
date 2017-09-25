@@ -1,10 +1,13 @@
-package ca.brainfarm;
+package ca.brainfarm.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import ca.brainfarm.R;
+import ca.brainfarm.UserSessionManager;
 
 /**
  * Created by Eric Thompson on 2017-05-08.

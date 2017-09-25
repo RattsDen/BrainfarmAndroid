@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.layouts;
 
 /**
  * This interface is used to define a method that should be called when a button

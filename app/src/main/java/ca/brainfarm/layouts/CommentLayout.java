@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.layouts;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 
+import ca.brainfarm.R;
 import ca.brainfarm.data.Comment;
 
 /**

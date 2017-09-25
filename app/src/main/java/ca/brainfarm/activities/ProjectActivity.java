@@ -1,16 +1,20 @@
-package ca.brainfarm;
+package ca.brainfarm.activities;
 
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ca.brainfarm.layouts.CommentLayout;
+import ca.brainfarm.layouts.CommentLayoutCallback;
+import ca.brainfarm.R;
+import ca.brainfarm.layouts.ReplyBoxLayout;
+import ca.brainfarm.layouts.ReplyBoxLayoutCallback;
+import ca.brainfarm.UserSessionManager;
 import ca.brainfarm.data.Comment;
 import ca.brainfarm.data.Project;
-import ca.brainfarm.data.SynthesisRequest;
 import ca.brainfarm.serviceclient.FaultHandler;
 import ca.brainfarm.serviceclient.ServiceCall;
 import ca.brainfarm.serviceclient.ServiceFaultException;

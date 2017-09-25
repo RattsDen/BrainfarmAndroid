@@ -1,4 +1,4 @@
-package ca.brainfarm;
+package ca.brainfarm.layouts;
 
 /**
  * Created by Eric Thompson on 2017-09-23.

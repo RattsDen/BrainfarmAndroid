@@ -1,12 +1,9 @@
-package ca.brainfarm;
+package ca.brainfarm.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 
-import ca.brainfarm.serviceclient.FaultHandler;
-import ca.brainfarm.serviceclient.ServiceCall;
-import ca.brainfarm.serviceclient.ServiceFaultException;
-import ca.brainfarm.serviceclient.SuccessHandler;
+import ca.brainfarm.R;
+import ca.brainfarm.activities.BaseBrainfarmActivity;
 
 public class MainActivity extends BaseBrainfarmActivity {
 
