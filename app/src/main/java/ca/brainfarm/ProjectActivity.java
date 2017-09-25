@@ -3,23 +3,29 @@ package ca.brainfarm;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ca.brainfarm.data.Comment;
 import ca.brainfarm.data.Project;
+import ca.brainfarm.data.SynthesisRequest;
 import ca.brainfarm.serviceclient.FaultHandler;
 import ca.brainfarm.serviceclient.ServiceCall;
 import ca.brainfarm.serviceclient.ServiceFaultException;
 import ca.brainfarm.serviceclient.SuccessHandler;
 
-public class ProjectActivity extends BaseBrainfarmActivity implements CommentLayoutCallback {
+public class ProjectActivity extends BaseBrainfarmActivity
+        implements CommentLayoutCallback, ReplyBoxLayoutCallback {
 
     private int projectID;
 
     private TextView lblProjectTitle;
     private LinearLayout projectTagContainer;
     private LinearLayout commentContainer;
+
+    private ReplyBoxLayout currentReplyBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +96,62 @@ public class ProjectActivity extends BaseBrainfarmActivity implements CommentLay
 
     @Override
     public void replyPressed(CommentLayout commentView) {
+        // Remove old reply box if there is one
+        if (currentReplyBox != null) {
+            ViewGroup replyBoxParent = (ViewGroup)currentReplyBox.getParent();
+            replyBoxParent.removeView(currentReplyBox);
+        }
+        // Create a new reply box and add it underneath the clicked comment layout
+        currentReplyBox = new ReplyBoxLayout(this, commentView.getComment(), this);
+        commentView.addReplyBox(currentReplyBox);
+    }
 
+    @Override
+    public void bookmarkPressed(CommentLayout commentView) {
+
+    }
+
+    @Override
+    public void cancelReplyPressed(ReplyBoxLayout replyBoxLayout) {
+        // Remove old reply box if there is one
+        if (currentReplyBox != null) {
+            ViewGroup replyBoxParent = (ViewGroup)currentReplyBox.getParent();
+            replyBoxParent.removeView(currentReplyBox);
+        }
+    }
+
+    @Override
+    public void submitReplyPressed(ReplyBoxLayout replyBoxLayout) {
+        int parentCommentID = replyBoxLayout.getParentComment().commentID;
+        String bodyText = replyBoxLayout.getReplyBody();
+        createComment(parentCommentID, bodyText);
+    }
+
+    private void createComment(int parentCommentID, String bodyText) {
+        String sessionToken = UserSessionManager.getInstance().getLoginToken();
+
+        ServiceCall createCommentCall = new ServiceCall("CreateComment");
+
+        createCommentCall.addArgument("sessionToken", sessionToken);
+        createCommentCall.addArgument("projectID", this.projectID);
+        createCommentCall.addArgument("parentCommentID", parentCommentID);
+        createCommentCall.addArgument("bodyText", bodyText);
+        createCommentCall.addArgument("isSynthesis", false);
+        createCommentCall.addArgument("isContribution", false);
+        createCommentCall.addArgument("isSpecification", false);
+        createCommentCall.addArgument("syntheses", null);
+        createCommentCall.addArgument("fileUploads", null);
+
+        createCommentCall.execute(Void.class, new SuccessHandler<Void>() {
+            @Override
+            public void handleSuccess(Void result) {
+
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+
+            }
+        });
     }
 }

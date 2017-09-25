@@ -21,7 +21,7 @@ import ca.brainfarm.data.Comment;
 public class CommentLayout extends RelativeLayout {
 
     private Comment comment;
-    private CommentLayoutCallback containerView;
+    private CommentLayoutCallback callback;
 
     private TextView lblUsername;
     private TextView lblCreateDate;
@@ -38,10 +38,10 @@ public class CommentLayout extends RelativeLayout {
         super(context);
     }
 
-    public CommentLayout(Context context, Comment comment, CommentLayoutCallback containerView) {
+    public CommentLayout(Context context, Comment comment, CommentLayoutCallback callback) {
         super(context);
         this.comment = comment;
-        this.containerView = containerView;
+        this.callback = callback;
 
         // Inflate the layout
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -112,7 +112,7 @@ public class CommentLayout extends RelativeLayout {
     private void createChildCommentViews() {
         for (Comment child : comment.children) {
             CommentLayout commentLayout =
-                    new CommentLayout(this.getContext(), child, this.containerView);
+                    new CommentLayout(this.getContext(), child, this.callback);
             childCommentContainer.addView(commentLayout);
         }
     }
@@ -122,7 +122,11 @@ public class CommentLayout extends RelativeLayout {
     }
 
     private void replyPressed() {
+        callback.replyPressed(this);
+    }
 
+    public void addReplyBox(ReplyBoxLayout replyBoxLayout) {
+        childCommentContainer.addView(replyBoxLayout, 0);
     }
 
     private void bookmarkPressed() {

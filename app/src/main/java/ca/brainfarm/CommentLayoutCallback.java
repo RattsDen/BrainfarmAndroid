@@ -11,4 +11,6 @@ public interface CommentLayoutCallback {
 
     void replyPressed(CommentLayout commentView);
 
+    void bookmarkPressed(CommentLayout commentView);
+
 }

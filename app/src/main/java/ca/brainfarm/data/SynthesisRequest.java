@@ -3,13 +3,11 @@ package ca.brainfarm.data;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Eric Thompson on 2017-04-26.
+ * Created by Eric Thompson on 2017-09-23.
  */
 
-public class SynthesisJunction {
+public class SynthesisRequest {
 
-    @SerializedName("SynthesisCommentID")
-    public int synthesisCommentID;
     @SerializedName("LinkedCommentID")
     public int linkedCommentID;
     @SerializedName("Subject")
