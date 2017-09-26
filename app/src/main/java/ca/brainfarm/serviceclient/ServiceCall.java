@@ -3,6 +3,10 @@ package ca.brainfarm.serviceclient;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +32,7 @@ public class ServiceCall {
 
     private String baseURL;
     private String resource;
-    private JSONObject arguments = new JSONObject();
+    private JsonObject arguments = new JsonObject();
 
     // If an exception occurs when the request is sent this variable will be set
     private Exception sendingException = null;
@@ -39,26 +43,7 @@ public class ServiceCall {
     }
 
     public void addArgument(String name, Object data) {
-        try {
-            arguments.put(name, data);
-        } catch (JSONException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public void addArgument(String name, Object[] array) {
-        JSONArray jsonArray = null;
-        if (array != null) {
-            jsonArray = new JSONArray();
-            for (Object o : array) {
-                jsonArray.put(o);
-            }
-        }
-        try {
-            arguments.put(name, jsonArray);
-        } catch (JSONException ex) {
-            throw new RuntimeException(ex);
-        }
+        arguments.add(name, new Gson().toJsonTree(data));
     }
 
     public <T> void execute(Class<T> expect, SuccessHandler<T> success, FaultHandler fault) {
