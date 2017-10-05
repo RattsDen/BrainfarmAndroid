@@ -1,0 +1,13 @@
+# This was here by default
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+# Eric added this, which might be a bad idea but we'll find out
+/app/build

@@ -12,4 +12,10 @@
     <color name="ribbonSynth">#9d00ff</color>
     <color name="ribbonSpec">#ff9c00</color>
     <color name="ribbonContrib">#00d124</color>
+
+    <color name="commentBackgroundProject">#ffffc9</color>
+    <color name="commentBackgroundSynth">#f0d8ff</color>
+    <color name="commentBackgroundSpec">#ffe0af</color>
+    <color name="commentBackgroundContrib">#c4ffce</color>
+
 </resources>

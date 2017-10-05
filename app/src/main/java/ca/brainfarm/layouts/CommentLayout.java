@@ -1,6 +1,7 @@
 package ca.brainfarm.layouts;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,7 @@ public class CommentLayout extends RelativeLayout {
     private TextView lblRibbonContrib;
     private TextView lblCommentBody;
     private Button btnCommentOptions;
+    private LinearLayout commentContentContainer;
     private LinearLayout childCommentContainer;
 
     public CommentLayout(Context context) {
@@ -58,6 +60,7 @@ public class CommentLayout extends RelativeLayout {
         lblRibbonContrib = (TextView)findViewById(R.id.lblRibbonContrib);
         lblCommentBody = (TextView)findViewById(R.id.lblCommentBody);
         btnCommentOptions = (Button)findViewById(R.id.btnCommentOptions);
+        commentContentContainer = (LinearLayout)findViewById(R.id.commentContentContainer);
         childCommentContainer = (LinearLayout)findViewById(R.id.childCommentContainer);
 
         setComponentValues();
@@ -98,14 +101,26 @@ public class CommentLayout extends RelativeLayout {
                 .format(comment.creationDate.getTime()));
         lblCommentID.setText("#" + Integer.toString(comment.commentID));
 
-        if (comment.parentCommentID == null)
+        if (comment.parentCommentID == null) {
             lblRibbonProject.setVisibility(VISIBLE);
-        if (comment.isSynthesis)
+            commentContentContainer.setBackgroundColor(
+                    ContextCompat.getColor(getContext(), R.color.commentBackgroundProject));
+        }
+        if (comment.isSynthesis) {
             lblRibbonSynth.setVisibility(VISIBLE);
-        if (comment.isSpecification)
+            commentContentContainer.setBackgroundColor(
+                    ContextCompat.getColor(getContext(), R.color.commentBackgroundSynth));
+        }
+        if (comment.isSpecification) {
             lblRibbonSpec.setVisibility(VISIBLE);
-        if (comment.isContribution)
+            commentContentContainer.setBackgroundColor(
+                    ContextCompat.getColor(getContext(), R.color.commentBackgroundSpec));
+        }
+        if (comment.isContribution) {
             lblRibbonContrib.setVisibility(VISIBLE);
+            commentContentContainer.setBackgroundColor(
+                    ContextCompat.getColor(getContext(), R.color.commentBackgroundContrib));
+        }
 
         lblCommentBody.setText(comment.bodyText);
     }

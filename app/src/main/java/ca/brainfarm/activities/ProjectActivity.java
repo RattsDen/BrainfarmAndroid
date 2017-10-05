@@ -121,6 +121,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
         if (currentReplyBox != null) {
             ViewGroup replyBoxParent = (ViewGroup)currentReplyBox.getParent();
             replyBoxParent.removeView(currentReplyBox);
+            currentReplyBox = null;
         }
     }
 
