@@ -71,6 +71,8 @@ public class LoginActivity extends BaseBrainfarmActivity {
             public void handleSuccess(String result) {
                 // Store login token
                 UserSessionManager.getInstance().setLoginToken(result);
+                // Set the current user as well
+                UserSessionManager.getInstance().setCurrentUser(result);
                 // Go to main activity
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Clear the activity stack

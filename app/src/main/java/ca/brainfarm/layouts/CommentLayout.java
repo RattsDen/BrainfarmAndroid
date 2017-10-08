@@ -3,6 +3,7 @@ package ca.brainfarm.layouts;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -10,10 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import ca.brainfarm.data.User;
 import java.text.SimpleDateFormat;
 
 import ca.brainfarm.R;
+import ca.brainfarm.UserSessionManager;
 import ca.brainfarm.data.Comment;
 
 /**
@@ -74,6 +76,23 @@ public class CommentLayout extends RelativeLayout {
             public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(getContext(), btnCommentOptions);
                 popup.getMenuInflater().inflate(R.menu.menu_comment, popup.getMenu());
+                Menu menu = popup.getMenu();
+
+                User currentUser = UserSessionManager.getInstance().getCurrentUser();
+                if(currentUser != null) {
+                    MenuItem menuCommentEdit = menu.findItem(R.id.menu_comment_edit);
+                    MenuItem menuCommentDelete = menu.findItem(R.id.menu_comment_delete);
+                    if (comment.userID == currentUser.userID) {
+                        menuCommentEdit.setVisible(true);
+                        menuCommentDelete.setVisible(true);
+                    }
+                }
+                else{
+                    MenuItem menuCommentReply = menu.findItem(R.id.menu_comment_reply);
+                    MenuItem menuCommentBookmark = menu.findItem(R.id.menu_comment_bookmark);
+                    menuCommentBookmark.setEnabled(false);
+                    menuCommentReply.setEnabled(false);
+                }
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -84,6 +103,12 @@ public class CommentLayout extends RelativeLayout {
                                 break;
                             case R.id.menu_comment_bookmark:
                                 bookmarkPressed();
+                                break;
+                            case R.id.menu_comment_edit:
+                                editPressed();
+                                break;
+                            case R.id.menu_comment_delete:
+                                deletePressed();
                                 break;
                         }
                         return true;
@@ -139,6 +164,14 @@ public class CommentLayout extends RelativeLayout {
 
     private void replyPressed() {
         callback.replyPressed(this);
+    }
+
+    private void editPressed(){
+        callback.editPressed(this);
+    }
+
+    private void deletePressed(){
+        callback.deletePressed(this);
     }
 
     public void addReplyBox(ReplyBoxLayout replyBoxLayout) {

@@ -92,6 +92,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
     }
 
     private void layoutComments(Comment[] comments) {
+        commentContainer.removeAllViews();
         for (Comment comment : comments) {
             CommentLayout commentLayout = new CommentLayout(this, comment, this);
             commentContainer.addView(commentLayout);
@@ -116,6 +117,18 @@ public class ProjectActivity extends BaseBrainfarmActivity
     }
 
     @Override
+    public void editPressed(CommentLayout commentView) {
+
+    }
+
+    @Override
+    public void deletePressed(CommentLayout commentView) {
+        String sessionToken = UserSessionManager.getInstance().getLoginToken();
+        int commentId = commentView.getComment().commentID;
+        deleteComment(sessionToken, commentId);
+    }
+
+    @Override
     public void cancelReplyPressed(ReplyBoxLayout replyBoxLayout) {
         // Remove old reply box if there is one
         if (currentReplyBox != null) {
@@ -134,7 +147,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
 
     private void createComment(int parentCommentID, String bodyText) {
         String sessionToken = UserSessionManager.getInstance().getLoginToken();
-
         ServiceCall createCommentCall = new ServiceCall("CreateComment");
 
         createCommentCall.addArgument("sessionToken", sessionToken);
@@ -150,7 +162,25 @@ public class ProjectActivity extends BaseBrainfarmActivity
         createCommentCall.execute(Void.class, new SuccessHandler<Void>() {
             @Override
             public void handleSuccess(Void result) {
+                getCommentsFromService();
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
 
+            }
+        });
+    }
+
+    private void deleteComment(String sessionToken, int commentId){
+        ServiceCall deleteCall = new ServiceCall("RemoveComment");
+        deleteCall.addArgument("sessionToken", sessionToken);
+        deleteCall.addArgument("commentID", commentId);
+
+        deleteCall.execute(Integer.class, new SuccessHandler<Integer>() {
+            @Override
+            public void handleSuccess(Integer result) {
+                getCommentsFromService();
             }
         }, new FaultHandler() {
             @Override

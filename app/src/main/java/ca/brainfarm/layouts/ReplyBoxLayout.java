@@ -56,6 +56,7 @@ public class ReplyBoxLayout extends RelativeLayout {
     }
 
     private void submitPressed() {
+        btnSubmitComment.setEnabled(false);
         callback.submitReplyPressed(this);
     }
 

@@ -44,6 +44,14 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btnSubmitComment"
+                style="@style/AppButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5px"
+                android:text="@string/button_submit" />
+
+            <Button
                 android:id="@+id/btnCancel"
                 style="@style/AppButtonStyle"
                 android:layout_width="wrap_content"
@@ -51,13 +59,6 @@
                 android:layout_margin="5px"
                 android:text="@string/button_cancel" />
 
-            <Button
-                android:id="@+id/btnSubmitComment"
-                style="@style/AppButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5px"
-                android:text="@string/button_submit" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
