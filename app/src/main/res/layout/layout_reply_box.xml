@@ -18,12 +18,12 @@
             android:background="@color/colorGrey">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/lblReplyTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10px"
                 android:layout_weight="1"
-                android:text="Reply"
+                android:text="Reply to Comment"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold" />
 

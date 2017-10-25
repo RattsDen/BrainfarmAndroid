@@ -121,33 +121,42 @@ public class CommentLayout extends RelativeLayout {
     }
 
     private void setComponentValues() {
-        lblUsername.setText(comment.username);
-        lblCreateDate.setText(new SimpleDateFormat("yyyy-MM-dd h:mm")
-                .format(comment.creationDate.getTime()));
-        lblCommentID.setText("#" + Integer.toString(comment.commentID));
+        if(!comment.isRemoved){
+            lblUsername.setText(comment.username);
+            lblCreateDate.setText(new SimpleDateFormat("yyyy-MM-dd h:mm")
+                    .format(comment.creationDate.getTime()));
+            lblCommentID.setText("#" + Integer.toString(comment.commentID));
 
-        if (comment.parentCommentID == null) {
-            lblRibbonProject.setVisibility(VISIBLE);
-            commentContentContainer.setBackgroundColor(
-                    ContextCompat.getColor(getContext(), R.color.commentBackgroundProject));
+            if (comment.parentCommentID == null) {
+                lblRibbonProject.setVisibility(VISIBLE);
+                commentContentContainer.setBackgroundColor(
+                        ContextCompat.getColor(getContext(), R.color.commentBackgroundProject));
+            }
+            if (comment.isSynthesis) {
+                lblRibbonSynth.setVisibility(VISIBLE);
+                commentContentContainer.setBackgroundColor(
+                        ContextCompat.getColor(getContext(), R.color.commentBackgroundSynth));
+            }
+            if (comment.isSpecification) {
+                lblRibbonSpec.setVisibility(VISIBLE);
+                commentContentContainer.setBackgroundColor(
+                        ContextCompat.getColor(getContext(), R.color.commentBackgroundSpec));
+            }
+            if (comment.isContribution) {
+                lblRibbonContrib.setVisibility(VISIBLE);
+                commentContentContainer.setBackgroundColor(
+                        ContextCompat.getColor(getContext(), R.color.commentBackgroundContrib));
+            }
+
+            lblCommentBody.setText(comment.bodyText);
         }
-        if (comment.isSynthesis) {
-            lblRibbonSynth.setVisibility(VISIBLE);
-            commentContentContainer.setBackgroundColor(
-                    ContextCompat.getColor(getContext(), R.color.commentBackgroundSynth));
-        }
-        if (comment.isSpecification) {
-            lblRibbonSpec.setVisibility(VISIBLE);
-            commentContentContainer.setBackgroundColor(
-                    ContextCompat.getColor(getContext(), R.color.commentBackgroundSpec));
-        }
-        if (comment.isContribution) {
-            lblRibbonContrib.setVisibility(VISIBLE);
-            commentContentContainer.setBackgroundColor(
-                    ContextCompat.getColor(getContext(), R.color.commentBackgroundContrib));
+        else{
+            lblUsername.setText("[COMMENT REMOVED]");
+            LinearLayout commentContentContainer = (LinearLayout)findViewById(R.id.commentContentContainer);
+            commentContentContainer.setVisibility(INVISIBLE);
         }
 
-        lblCommentBody.setText(comment.bodyText);
+
     }
 
     private void createChildCommentViews() {
