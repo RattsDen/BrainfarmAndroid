@@ -1,7 +1,9 @@
 package ca.brainfarm.activities;
 
+import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -92,6 +94,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
     }
 
     private void layoutComments(Comment[] comments) {
+        commentContainer.removeAllViews();
         for (Comment comment : comments) {
             CommentLayout commentLayout = new CommentLayout(this, comment, this);
             commentContainer.addView(commentLayout);
@@ -116,6 +119,35 @@ public class ProjectActivity extends BaseBrainfarmActivity
     }
 
     @Override
+    public void editPressed(CommentLayout commentView) {
+        // Remove old reply box if there is one
+        if (currentReplyBox != null) {
+            ViewGroup replyBoxParent = (ViewGroup)currentReplyBox.getParent();
+            replyBoxParent.removeView(currentReplyBox);
+        }
+        // Create a new reply box and add it underneath the clicked comment layout
+        currentReplyBox = new ReplyBoxLayout(this, commentView.getComment(), this, true);
+        commentView.addReplyBox(currentReplyBox);
+    }
+
+    @Override
+    public void deletePressed(CommentLayout commentView) {
+        final String sessionToken = UserSessionManager.getInstance().getLoginToken();
+        final int commentId = commentView.getComment().commentID;
+
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Comment")
+                .setMessage("Are you sure?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteComment(sessionToken, commentId);
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+    }
+
+    @Override
     public void cancelReplyPressed(ReplyBoxLayout replyBoxLayout) {
         // Remove old reply box if there is one
         if (currentReplyBox != null) {
@@ -132,9 +164,15 @@ public class ProjectActivity extends BaseBrainfarmActivity
         createComment(parentCommentID, bodyText);
     }
 
+    @Override
+    public void submitEditReplyPressed(ReplyBoxLayout replyBoxLayout){
+        int parentCommentID = replyBoxLayout.getParentComment().commentID;
+        String bodyText = replyBoxLayout.getReplyBody();
+        editComment(parentCommentID, bodyText);
+    }
+
     private void createComment(int parentCommentID, String bodyText) {
         String sessionToken = UserSessionManager.getInstance().getLoginToken();
-
         ServiceCall createCommentCall = new ServiceCall("CreateComment");
 
         createCommentCall.addArgument("sessionToken", sessionToken);
@@ -150,7 +188,50 @@ public class ProjectActivity extends BaseBrainfarmActivity
         createCommentCall.execute(Void.class, new SuccessHandler<Void>() {
             @Override
             public void handleSuccess(Void result) {
+                getCommentsFromService();
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
 
+            }
+        });
+    }
+
+    private void editComment(int commentID, String bodyText){
+        String sessionToken = UserSessionManager.getInstance().getLoginToken();
+        ServiceCall editCommentCall = new ServiceCall("EditComment");
+
+        editCommentCall.addArgument("sessionToken", sessionToken);
+        editCommentCall.addArgument("commentID", commentID);
+        editCommentCall.addArgument("bodyText", bodyText);
+        editCommentCall.addArgument("isSynthesis", false);
+        editCommentCall.addArgument("isContribution", false);
+        editCommentCall.addArgument("isSpecification", false);
+        editCommentCall.addArgument("syntheses", null);
+
+        editCommentCall.execute(Void.class, new SuccessHandler<Void>() {
+            @Override
+            public void handleSuccess(Void result) {
+                getCommentsFromService();
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+
+            }
+        });
+    }
+
+    private void deleteComment(String sessionToken, int commentId){
+        ServiceCall deleteCall = new ServiceCall("RemoveComment");
+        deleteCall.addArgument("sessionToken", sessionToken);
+        deleteCall.addArgument("commentID", commentId);
+
+        deleteCall.execute(Integer.class, new SuccessHandler<Integer>() {
+            @Override
+            public void handleSuccess(Integer result) {
+                getCommentsFromService();
             }
         }, new FaultHandler() {
             @Override

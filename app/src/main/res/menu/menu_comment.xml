@@ -8,4 +8,12 @@
     <item
         android:id="@+id/menu_comment_bookmark"
         android:title="@string/menu_comment_bookmark" />
+    <item
+        android:id="@+id/menu_comment_edit"
+        android:visible="false"
+        android:title="Edit" />
+    <item
+        android:id="@+id/menu_comment_delete"
+        android:visible="false"
+        android:title="Delete" />
 </menu>

@@ -18,12 +18,12 @@
             android:background="@color/colorGrey">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/lblReplyTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10px"
                 android:layout_weight="1"
-                android:text="Reply"
+                android:text="Reply to Comment"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold" />
 
@@ -44,6 +44,14 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btnSubmitComment"
+                style="@style/AppButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5px"
+                android:text="@string/button_submit" />
+
+            <Button
                 android:id="@+id/btnCancel"
                 style="@style/AppButtonStyle"
                 android:layout_width="wrap_content"
@@ -51,13 +59,6 @@
                 android:layout_margin="5px"
                 android:text="@string/button_cancel" />
 
-            <Button
-                android:id="@+id/btnSubmitComment"
-                style="@style/AppButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5px"
-                android:text="@string/button_submit" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

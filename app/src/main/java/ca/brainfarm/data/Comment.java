@@ -35,6 +35,8 @@ public class Comment {
     public String username;
     @SerializedName("IsBookmarked")
     public boolean isBookmarked;
+    @SerializedName("IsRemoved")
+    public boolean isRemoved;
     @SerializedName("Children")
     public Comment[] children;
     @SerializedName("LinkingCommentIDs")

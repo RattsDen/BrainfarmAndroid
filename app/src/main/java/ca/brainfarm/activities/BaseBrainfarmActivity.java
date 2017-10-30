@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import ca.brainfarm.R;
 import ca.brainfarm.UserSessionManager;
+import ca.brainfarm.data.User;
 
 /**
  * Created by Eric Thompson on 2017-05-08.
@@ -76,6 +77,7 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
     protected void logoutMenuItemPressed() {
         // Clear stored session token
         UserSessionManager.getInstance().setLoginToken(null);
+        UserSessionManager.getInstance().setCurrentUser((User)null);
         // Go to main activity
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Clear the activity stack
