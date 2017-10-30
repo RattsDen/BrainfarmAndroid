@@ -6,6 +6,6 @@
         android:id="@+id/menu_register"
         android:title="@string/menu_register" />
     <item
-        android:id="@+id/menu_project"
-        android:title="Project" />
+        android:id="@+id/menu_search"
+        android:title="Search Projects" />
 </menu>

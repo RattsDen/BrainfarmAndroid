@@ -56,11 +56,8 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
                 createProjectMenuItemPressed();
                 break;
 
-            case R.id.menu_project:
-                // TODO: remove hardcoded navigation
-                Intent intent = new Intent(this, ProjectActivity.class);
-                intent.putExtra("projectID", 2);
-                startActivity(intent);
+            case R.id.menu_search:
+                searchProjectssMenuItemPressed();
                 break;
         }
         return true;
@@ -101,6 +98,13 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
         if (!(this instanceof CreateProjectActivity)) { // If not already on Create Project activity
             // Open Create Project activity
             Intent intent = new Intent(this, CreateProjectActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    protected void searchProjectssMenuItemPressed() {
+        if (!(this instanceof SearchActivity)) { // If not already on Search activity
+            Intent intent = new Intent(this, SearchActivity.class);
             startActivity(intent);
         }
     }

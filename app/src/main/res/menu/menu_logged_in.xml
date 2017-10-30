@@ -11,6 +11,6 @@
         android:title="@string/menu_create_project"/>
 
     <item
-        android:id="@+id/menu_project"
-        android:title="Project" />
+        android:id="@+id/menu_search"
+        android:title="Search Projects" />
 </menu>
