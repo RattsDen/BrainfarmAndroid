@@ -17,6 +17,7 @@ import ca.brainfarm.R;
 import ca.brainfarm.data.Comment;
 import ca.brainfarm.data.ContributionFile;
 import ca.brainfarm.data.FileAttachmentRequest;
+import ca.brainfarm.data.SynthesisRequest;
 
 /**
  * Created by Eric Thompson on 2017-09-22.
@@ -42,6 +43,7 @@ public class ReplyBoxLayout extends RelativeLayout {
     private boolean isEditBox = false;
 
     private ArrayList<FileAttachmentRequest> fileAttachmentRequests = new ArrayList<>();
+    private ArrayList<SynthesisRequest> synthesisRequests = new ArrayList<>();
 
     public ReplyBoxLayout(Context context, Comment parentComment, ReplyBoxLayoutCallback callback) {
         super(context);
@@ -152,8 +154,31 @@ public class ReplyBoxLayout extends RelativeLayout {
         lblFilename.setText(text);
     }
 
+    public void addFileAttachmentRequest(FileAttachmentRequest fileAttachmentRequest) {
+        fileAttachmentRequests.add(fileAttachmentRequest);
+    }
+
+    public void clearFileAttachmentRequests() {
+        fileAttachmentRequests.clear();
+    }
+
     public ArrayList<FileAttachmentRequest> getFileAttachmentRequests() {
-        return fileAttachmentRequests;
+        return new ArrayList<>(fileAttachmentRequests);
+    }
+
+    public void addSynthesisRequest(SynthesisRequest synthesisRequest) {
+        synthesisRequests.add(synthesisRequest);
+        SynthesisRequestLayout synthesisRequestLayout
+                = new SynthesisRequestLayout(getContext(), this, synthesisRequest);
+        synthesisPanel.addView(synthesisRequestLayout);
+    }
+
+    public void removeSynthesisRequest(SynthesisRequest synthesisRequest) {
+        synthesisRequests.remove(synthesisRequest);
+    }
+
+    public ArrayList<SynthesisRequest> getSynthesisRequests() {
+        return new ArrayList<>(synthesisRequests);
     }
 
     public boolean isSpecificationChecked() {

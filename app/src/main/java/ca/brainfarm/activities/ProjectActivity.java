@@ -9,8 +9,11 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 
 import ca.brainfarm.data.ContributionFile;
 import ca.brainfarm.data.FileAttachmentRequest;
+import ca.brainfarm.data.SynthesisRequest;
+import ca.brainfarm.data.User;
 import ca.brainfarm.layouts.CommentLayout;
 import ca.brainfarm.layouts.CommentLayoutCallback;
 import ca.brainfarm.R;
@@ -133,6 +138,69 @@ public class ProjectActivity extends BaseBrainfarmActivity
     }
 
     @Override
+    public void createCommentOptionsPopupMenu(PopupMenu popup, final CommentLayout commentView) {
+        popup.getMenuInflater().inflate(R.menu.menu_comment, popup.getMenu());
+        Menu menu = popup.getMenu();
+
+        User currentUser = UserSessionManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            MenuItem menuCommentEdit = menu.findItem(R.id.menu_comment_edit);
+            MenuItem menuCommentDelete = menu.findItem(R.id.menu_comment_delete);
+            if (commentView.getComment().userID == currentUser.userID) {
+                // Current user is comment owner - make edit and delete options visible
+                menuCommentEdit.setVisible(true);
+                menuCommentDelete.setVisible(true);
+            }
+        } else {
+            // Current user is null - disable reply and bookmark options
+            MenuItem menuCommentReply = menu.findItem(R.id.menu_comment_reply);
+            MenuItem menuCommentBookmark = menu.findItem(R.id.menu_comment_bookmark);
+            menuCommentBookmark.setEnabled(false);
+            menuCommentReply.setEnabled(false);
+        }
+
+        // If in synthesis mode, make synthesize option visible
+        if (currentReplyBox != null && currentReplyBox.isSynthesisChecked()) {
+            MenuItem menuCommentSynth = menu.findItem(R.id.menu_comment_synth);
+            menuCommentSynth.setVisible(true);
+        }
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_comment_reply:
+                        replyPressed(commentView);
+                        break;
+                    case R.id.menu_comment_bookmark:
+                        bookmarkPressed(commentView);
+                        break;
+                    case R.id.menu_comment_edit:
+                        editPressed(commentView);
+                        break;
+                    case R.id.menu_comment_delete:
+                        deletePressed(commentView);
+                        break;
+                    case R.id.menu_comment_synth:
+                        synthesizePressed(commentView);
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void synthesizePressed(CommentLayout commentView) {
+        if (currentReplyBox != null) {
+            SynthesisRequest synthesisRequest = new SynthesisRequest();
+            synthesisRequest.linkedCommentID = commentView.getComment().commentID;
+            synthesisRequest.subject = "";
+            currentReplyBox.addSynthesisRequest(synthesisRequest);
+        }
+    }
+
+    @Override
     public void editPressed(CommentLayout commentView) {
         // Remove old reply box if there is one
         if (currentReplyBox != null) {
@@ -199,7 +267,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
         if (requestCode == FILE_SELECT && resultCode == RESULT_OK) {
             if (currentReplyBox != null) {
                 // Clear existing list of files to attach to the new comment
-                currentReplyBox.getFileAttachmentRequests().clear();
+                currentReplyBox.clearFileAttachmentRequests();
                 // Set text next to "Upload File" button
                 currentReplyBox.setFilePickerLabelText("Uploading...");
                 // Get file uri from result
@@ -247,7 +315,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
             FileAttachmentRequest fileAttachmentRequest = new FileAttachmentRequest();
             fileAttachmentRequest.contributionFileID = contributionFile.contributionFileID;
             fileAttachmentRequest.filename = filename;
-            currentReplyBox.getFileAttachmentRequests().add(fileAttachmentRequest);
+            currentReplyBox.addFileAttachmentRequest(fileAttachmentRequest);
             // Set text next to "Upload File" button
             currentReplyBox.setFilePickerLabelText(filename);
         }
@@ -264,7 +332,11 @@ public class ProjectActivity extends BaseBrainfarmActivity
         createCommentCall.addArgument("isSynthesis", currentReplyBox.isSynthesisChecked());
         createCommentCall.addArgument("isContribution", currentReplyBox.isContributionChecked());
         createCommentCall.addArgument("isSpecification", currentReplyBox.isSpecificationChecked());
-        createCommentCall.addArgument("syntheses", null);
+        createCommentCall.addArgument("syntheses",
+                currentReplyBox.isSynthesisChecked() ?
+                currentReplyBox.getSynthesisRequests() :
+                null
+        );
         createCommentCall.addArgument("attachments",
                 currentReplyBox.isContributionChecked() ?
                 currentReplyBox.getFileAttachmentRequests() :
@@ -274,6 +346,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
         createCommentCall.execute(Void.class, new SuccessHandler<Void>() {
             @Override
             public void handleSuccess(Void result) {
+                currentReplyBox = null;
                 getCommentsFromService();
             }
         }, new FaultHandler() {
@@ -300,6 +373,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
         editCommentCall.execute(Void.class, new SuccessHandler<Void>() {
             @Override
             public void handleSuccess(Void result) {
+                currentReplyBox = null;
                 getCommentsFromService();
             }
         }, new FaultHandler() {
