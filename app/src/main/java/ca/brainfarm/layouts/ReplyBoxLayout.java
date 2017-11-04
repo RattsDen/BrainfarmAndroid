@@ -1,15 +1,22 @@
 package ca.brainfarm.layouts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import ca.brainfarm.R;
 import ca.brainfarm.data.Comment;
+import ca.brainfarm.data.ContributionFile;
+import ca.brainfarm.data.FileAttachmentRequest;
 
 /**
  * Created by Eric Thompson on 2017-09-22.
@@ -21,10 +28,20 @@ public class ReplyBoxLayout extends RelativeLayout {
     private ReplyBoxLayoutCallback callback;
 
     private EditText txtCommentBody;
+    private CheckBox chkIsSpecification;
+    private CheckBox chkIsSynthesis;
+    private CheckBox chkIsContribution;
+    private LinearLayout synthesisPanel;
+    private LinearLayout contributionPanel;
+    private Button btnChooseFile;
+    private TextView lblFilename;
     private Button btnSubmitComment;
     private Button btnCancel;
     private TextView lblReplyTitle;
+
     private boolean isEditBox = false;
+
+    private ArrayList<FileAttachmentRequest> fileAttachmentRequests = new ArrayList<>();
 
     public ReplyBoxLayout(Context context, Comment parentComment, ReplyBoxLayoutCallback callback) {
         super(context);
@@ -36,6 +53,13 @@ public class ReplyBoxLayout extends RelativeLayout {
         inflater.inflate(R.layout.layout_reply_box, this, true);
 
         txtCommentBody = (EditText)findViewById(R.id.txtCommentBody);
+        chkIsSpecification = (CheckBox)findViewById(R.id.chkIsSpecification);
+        chkIsSynthesis = (CheckBox)findViewById(R.id.chkIsSynthesis);
+        chkIsContribution = (CheckBox)findViewById(R.id.chkIsContribution);
+        synthesisPanel = (LinearLayout)findViewById(R.id.synthesisPanel);
+        contributionPanel = (LinearLayout)findViewById(R.id.contributionPanel);
+        btnChooseFile = (Button)findViewById(R.id.btnChooseFile);
+        lblFilename = (TextView)findViewById(R.id.lblFilename);
         btnSubmitComment = (Button)findViewById(R.id.btnSubmitComment);
         btnCancel = (Button)findViewById(R.id.btnCancel);
         lblReplyTitle = (TextView)findViewById(R.id.lblReplyTitle);
@@ -75,6 +99,31 @@ public class ReplyBoxLayout extends RelativeLayout {
                 cancelPressed();
             }
         });
+
+        chkIsSynthesis.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                synthesisPanel.setVisibility(chkIsSynthesis.isChecked() ? VISIBLE : GONE);
+            }
+        });
+
+        chkIsContribution.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contributionPanel.setVisibility(chkIsContribution.isChecked() ? VISIBLE : GONE);
+            }
+        });
+
+        btnChooseFile.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseFileButtonPressed();
+            }
+        });
+    }
+
+    private void chooseFileButtonPressed() {
+        callback.chooseFilePressed(this);
     }
 
     private void submitPressed() {
@@ -97,6 +146,26 @@ public class ReplyBoxLayout extends RelativeLayout {
 
     public String getReplyBody() {
         return txtCommentBody.getText().toString();
+    }
+
+    public void setFilePickerLabelText(String text) {
+        lblFilename.setText(text);
+    }
+
+    public ArrayList<FileAttachmentRequest> getFileAttachmentRequests() {
+        return fileAttachmentRequests;
+    }
+
+    public boolean isSpecificationChecked() {
+        return chkIsSpecification.isChecked();
+    }
+
+    public boolean isSynthesisChecked() {
+        return chkIsSynthesis.isChecked();
+    }
+
+    public boolean isContributionChecked() {
+        return chkIsContribution.isChecked();
     }
 
 }

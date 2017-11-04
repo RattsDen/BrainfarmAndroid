@@ -37,6 +37,58 @@
             android:hint="Type your comment..."
             android:inputType="textMultiLine" />
 
+        <CheckBox
+            android:id="@+id/chkIsSpecification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Specification" />
+
+        <CheckBox
+            android:id="@+id/chkIsSynthesis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Synthesis" />
+
+        <LinearLayout
+            android:id="@+id/synthesisPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"></LinearLayout>
+
+        <CheckBox
+            android:id="@+id/chkIsContribution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contribution" />
+
+        <LinearLayout
+            android:id="@+id/contributionPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnChooseFile"
+                style="@style/AppButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5px"
+                android:layout_weight="0"
+                android:background="@color/ribbonContrib"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Upload File" />
+
+            <TextView
+                android:id="@+id/lblFilename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                tools:text="Filename" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -11,4 +11,7 @@ public interface ReplyBoxLayoutCallback {
     void submitReplyPressed(ReplyBoxLayout replyBoxLayout);
 
     void submitEditReplyPressed(ReplyBoxLayout replyBoxLayout);
+
+    void chooseFilePressed(ReplyBoxLayout replyBoxLayout);
+
 }

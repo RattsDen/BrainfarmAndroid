@@ -13,7 +13,9 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
@@ -28,22 +30,36 @@ import java.util.Collection;
 
 public class ServiceCall {
 
+    public static final int FORMAT_JSON = 0;
+    public static final int FORMAT_BINARY = 1;
+
     public static String defaultBaseURL;
 
     private String baseURL;
     private String resource;
+    private int requestFormat;
     private JsonObject arguments = new JsonObject();
+    private InputStream contentStream = null;
 
     // If an exception occurs when the request is sent this variable will be set
     private Exception sendingException = null;
 
     public ServiceCall(String resource) {
+        this(resource, FORMAT_JSON);
+    }
+
+    public ServiceCall(String resource, int requestFormat) {
         baseURL = defaultBaseURL;
         this.resource = resource;
+        this.requestFormat = requestFormat;
     }
 
     public void addArgument(String name, Object data) {
         arguments.add(name, new Gson().toJsonTree(data));
+    }
+
+    public void setContentStream(InputStream stream) {
+        contentStream = stream;
     }
 
     public <T> void execute(Class<T> expect, SuccessHandler<T> success, FaultHandler fault) {
@@ -113,10 +129,7 @@ public class ServiceCall {
             con = getBaseConnection(getResourceURL(resource));
 
             // Add arguments to request body
-            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-            wr.write(arguments.toString());
-            wr.flush();
-            wr.close();
+            writeRequestContent(con.getOutputStream());
 
             // Send request and receive response
             serviceResponse.responseCode = con.getResponseCode();
@@ -146,6 +159,33 @@ public class ServiceCall {
         }
     }
 
+    private void writeRequestContent(OutputStream outputStream) throws IOException {
+        if (requestFormat == FORMAT_JSON) {
+            // JSON format
+            // write json string
+            OutputStreamWriter wr = new OutputStreamWriter(outputStream);
+            wr.write(arguments.toString());
+            wr.flush();
+            wr.close();
+
+        } else if (requestFormat == FORMAT_BINARY) {
+            // Binary format
+            if (contentStream != null) {
+                // Copy from input stream to output stream
+                byte[] buffer = new byte[8 * 1024];
+                int length;
+                while ((length = contentStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+                // Close input stream, be courteous
+                contentStream.close();
+                // Flush and close output stream
+                outputStream.flush();
+                outputStream.close();
+            }
+        }
+    }
+
     private URL getResourceURL(String methodName) throws MalformedURLException {
         return new URL(baseURL + methodName);
     }
@@ -153,7 +193,9 @@ public class ServiceCall {
     private HttpURLConnection getBaseConnection(URL url) throws IOException {
         HttpURLConnection con = (HttpURLConnection)url.openConnection();
         con.setRequestMethod("POST");
-        con.setRequestProperty("Content-type", "application/json");
+        if (requestFormat == FORMAT_JSON) {
+            con.setRequestProperty("Content-type", "application/json");
+        }
 
         return con;
     }
