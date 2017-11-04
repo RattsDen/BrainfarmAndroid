@@ -17,6 +17,7 @@ import ca.brainfarm.R;
 import ca.brainfarm.data.Comment;
 import ca.brainfarm.data.ContributionFile;
 import ca.brainfarm.data.FileAttachmentRequest;
+import ca.brainfarm.data.SynthesisJunction;
 import ca.brainfarm.data.SynthesisRequest;
 
 /**
@@ -46,9 +47,15 @@ public class ReplyBoxLayout extends RelativeLayout {
     private ArrayList<SynthesisRequest> synthesisRequests = new ArrayList<>();
 
     public ReplyBoxLayout(Context context, Comment parentComment, ReplyBoxLayoutCallback callback) {
+        this(context, parentComment, callback, false);
+    }
+
+    public ReplyBoxLayout(Context context, Comment parentComment, ReplyBoxLayoutCallback callback,
+                          boolean isEditBox){
         super(context);
         this.parentComment = parentComment;
         this.callback = callback;
+        this.isEditBox = isEditBox;
 
         // Inflate the layout
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -66,19 +73,35 @@ public class ReplyBoxLayout extends RelativeLayout {
         btnCancel = (Button)findViewById(R.id.btnCancel);
         lblReplyTitle = (TextView)findViewById(R.id.lblReplyTitle);
 
-        setupListeners();
-    }
+        if (isEditBox) {
+            lblReplyTitle.setText("Edit Comment");
+            txtCommentBody.setText(parentComment.bodyText);
 
-    public ReplyBoxLayout(Context context, Comment parentComment, ReplyBoxLayoutCallback callback, boolean isEditBox){
-        this(context, parentComment, callback);
-        this.isEditBox = isEditBox;
-        txtCommentBody.setText(parentComment.bodyText);
+            if (parentComment.isSpecification) {
+                chkIsSpecification.setChecked(true);
+            }
+            if (parentComment.isSynthesis) {
+                chkIsSynthesis.setChecked(true);
+                synthesisPanel.setVisibility(VISIBLE);
+            }
+            if (parentComment.isContribution) {
+                chkIsContribution.setChecked(true);
+                contributionPanel.setVisibility(VISIBLE);
+            }
+
+            for (SynthesisJunction synthesisJunction : parentComment.syntheses) {
+                SynthesisRequest synthesisRequest = new SynthesisRequest();
+                synthesisRequest.linkedCommentID = synthesisJunction.linkedCommentID;
+                synthesisRequest.subject = synthesisJunction.subject;
+                addSynthesisRequest(synthesisRequest);
+            }
+        }
+
         setupListeners();
     }
 
     private void setupListeners() {
         if(this.isEditBox){
-            lblReplyTitle.setText("Edit Comment");
             btnSubmitComment.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -368,7 +368,11 @@ public class ProjectActivity extends BaseBrainfarmActivity
         editCommentCall.addArgument("isSynthesis", currentReplyBox.isSynthesisChecked());
         editCommentCall.addArgument("isContribution", currentReplyBox.isContributionChecked());
         editCommentCall.addArgument("isSpecification", currentReplyBox.isSpecificationChecked());
-        editCommentCall.addArgument("syntheses", null);
+        editCommentCall.addArgument("syntheses",
+                currentReplyBox.isSynthesisChecked() ?
+                currentReplyBox.getSynthesisRequests() :
+                null
+        );
 
         editCommentCall.execute(Void.class, new SuccessHandler<Void>() {
             @Override
