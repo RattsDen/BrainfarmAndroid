@@ -11,9 +11,11 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import ca.brainfarm.ContributionFileDownloader;
 import ca.brainfarm.data.ContributionFile;
 import ca.brainfarm.data.FileAttachmentRequest;
+import ca.brainfarm.data.SynthesisJunction;
 import ca.brainfarm.data.SynthesisRequest;
 import ca.brainfarm.data.User;
 import ca.brainfarm.layouts.CommentLayout;
@@ -49,6 +53,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
     private TextView lblProjectTitle;
     private LinearLayout projectTagContainer;
     private LinearLayout commentContainer;
+    private ScrollView pageScroll;
 
     private ReplyBoxLayout currentReplyBox;
 
@@ -63,6 +68,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
         lblProjectTitle = (TextView)findViewById(R.id.lblProjectTitle);
         projectTagContainer = (LinearLayout)findViewById(R.id.projectTagContainer);
         commentContainer = (LinearLayout)findViewById(R.id.commentContainer);
+        pageScroll = (ScrollView)findViewById(R.id.pageScroll);
 
         getProjectFromService();
         getCommentsFromService();
@@ -118,6 +124,18 @@ public class ProjectActivity extends BaseBrainfarmActivity
             CommentLayout commentLayout = new CommentLayout(this, comment, this);
             commentContainer.addView(commentLayout);
         }
+    }
+
+    private void scrollToComment(int commentID) {
+        // Scroll to top of child container so that the whole comment can be seen
+        final View scrollTo = commentContainer.findViewWithTag(commentID)
+                .findViewById(R.id.childCommentContainer);
+        pageScroll.post(new Runnable() {
+            @Override
+            public void run() {
+                pageScroll.smoothScrollTo(0, scrollTo.getTop());
+            }
+        });
     }
 
     @Override
@@ -198,6 +216,18 @@ public class ProjectActivity extends BaseBrainfarmActivity
             synthesisRequest.subject = "";
             currentReplyBox.addSynthesisRequest(synthesisRequest);
         }
+    }
+
+    @Override
+    public void synthesisLinkPressed(CommentLayout commentView, SynthesisJunction synthesisJunction) {
+        scrollToComment(synthesisJunction.linkedCommentID);
+    }
+
+    @Override
+    public void contributionLinkPressed(CommentLayout commentView, ContributionFile contributionFile) {
+        ContributionFileDownloader downloader
+                = new ContributionFileDownloader(this, contributionFile);
+        downloader.startDownload();
     }
 
     @Override
@@ -284,7 +314,10 @@ public class ProjectActivity extends BaseBrainfarmActivity
             final String filename = getFileNameFromUri(fileUri);
 
             // Upload
-            ServiceCall uploadFileCall = new ServiceCall("UploadFile", ServiceCall.FORMAT_BINARY);
+            ServiceCall uploadFileCall = new ServiceCall(
+                    "UploadFile",               // UploadFile service method
+                    ServiceCall.FORMAT_BINARY,  // Request data is binary
+                    ServiceCall.FORMAT_JSON);   // Expect response to be JSON
             uploadFileCall.setContentStream(stream);
             uploadFileCall.execute(ContributionFile.class, new SuccessHandler<ContributionFile>() {
                 @Override

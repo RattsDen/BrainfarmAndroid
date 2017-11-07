@@ -38,6 +38,7 @@ public class ServiceCall {
     private String baseURL;
     private String resource;
     private int requestFormat;
+    private int responseFormat;
     private JsonObject arguments = new JsonObject();
     private InputStream contentStream = null;
 
@@ -45,13 +46,14 @@ public class ServiceCall {
     private Exception sendingException = null;
 
     public ServiceCall(String resource) {
-        this(resource, FORMAT_JSON);
+        this(resource, FORMAT_JSON, FORMAT_JSON);
     }
 
-    public ServiceCall(String resource, int requestFormat) {
+    public ServiceCall(String resource, int requestFormat, int responseFormat) {
         baseURL = defaultBaseURL;
         this.resource = resource;
         this.requestFormat = requestFormat;
+        this.responseFormat = responseFormat;
     }
 
     public void addArgument(String name, Object data) {
@@ -69,6 +71,10 @@ public class ServiceCall {
     public <T> void execute(Class<T> expect, SuccessHandler<T> success, FaultHandler fault,
                             ExceptionHandler exception) {
         new ServiceCallTask<>(expect, success, fault, exception).execute();
+    }
+
+    public void executeForStream(SuccessHandler<InputStream> success, FaultHandler fault) {
+        new ServiceCallTask<>(InputStream.class, success, fault).execute();
     }
 
     private class ServiceCallTask<T> extends AsyncTask<Void, Void, ServiceResponse> {
@@ -109,7 +115,16 @@ public class ServiceCall {
             if (sendingException == null) {
                 //onComplete(result);
                 try {
-                    successHandler.handleSuccess(expect.cast(result.getResponseObject(expect)));
+                    // JSON response - get POJO of expected class
+                    if (responseFormat == FORMAT_JSON) {
+                        successHandler.handleSuccess(expect.cast(result.getResponseObject(expect)));
+
+                    // Binary response - get content stream - EXPECT MUST BE InputStream !!
+                    } else if (responseFormat == FORMAT_BINARY) {
+                        if (expect == InputStream.class) {
+                            successHandler.handleSuccess(expect.cast(result.getContentStream()));
+                        }
+                    }
                 } catch (ServiceFaultException ex) {
                     faultHandler.handleFault(ex);
                 }
@@ -129,27 +144,32 @@ public class ServiceCall {
             con = getBaseConnection(getResourceURL(resource));
 
             // Add arguments to request body
-            writeRequestContent(con.getOutputStream());
+            if (requestFormat == FORMAT_JSON) {
+                writeRequestContentJSON(con.getOutputStream());
+            } else if (requestFormat == FORMAT_BINARY) {
+                writeRequestContentBinary(con.getOutputStream());
+            }
 
             // Send request and receive response
             serviceResponse.responseCode = con.getResponseCode();
-            BufferedReader in;
+
+            InputStream stream;
             // For some strange reason, a different stream object is used when the
             // response code is 4xx or 5xx. This gets the appropriate one.
             if (serviceResponse.responseCode >= 400) {
-                in = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+                stream = con.getErrorStream();
             } else {
-                in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                stream = con.getInputStream();
             }
-            String inputLine;
-            StringBuilder responseBody = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                responseBody.append(inputLine);
-            }
-            in.close();
 
-            // Set response object body
-            serviceResponse.setResponseBody(responseBody.toString());
+            // Store the response in the appropriate format
+            if (responseFormat == FORMAT_JSON || serviceResponse.responseCode >= 400) {
+                // Response is either JSON or a bad response code
+                storeResponseContentJSON(stream, serviceResponse);
+            } else if (responseFormat == FORMAT_BINARY) {
+                // Response is binary
+                storeResponseContentBinary(stream, serviceResponse);
+            }
 
             return serviceResponse;
 
@@ -159,31 +179,49 @@ public class ServiceCall {
         }
     }
 
-    private void writeRequestContent(OutputStream outputStream) throws IOException {
-        if (requestFormat == FORMAT_JSON) {
-            // JSON format
-            // write json string
-            OutputStreamWriter wr = new OutputStreamWriter(outputStream);
-            wr.write(arguments.toString());
-            wr.flush();
-            wr.close();
+    private void writeRequestContentJSON(OutputStream outputStream) throws IOException {
+        // JSON format
+        // write json string
+        OutputStreamWriter wr = new OutputStreamWriter(outputStream);
+        wr.write(arguments.toString());
+        wr.flush();
+        wr.close();
+    }
 
-        } else if (requestFormat == FORMAT_BINARY) {
-            // Binary format
-            if (contentStream != null) {
-                // Copy from input stream to output stream
-                byte[] buffer = new byte[8 * 1024];
-                int length;
-                while ((length = contentStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
-                }
-                // Close input stream, be courteous
-                contentStream.close();
-                // Flush and close output stream
-                outputStream.flush();
-                outputStream.close();
+    private void writeRequestContentBinary(OutputStream outputStream) throws IOException {
+        // Binary format
+        if (contentStream != null) {
+            // Copy from input stream to output stream
+            byte[] buffer = new byte[8 * 1024];
+            int length;
+            while ((length = contentStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
             }
+            // Close input stream, be courteous
+            contentStream.close();
+            // Flush and close output stream
+            outputStream.flush();
+            outputStream.close();
         }
+    }
+
+    private void storeResponseContentJSON(InputStream inputStream,
+                                          ServiceResponse serviceResponse) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String inputLine;
+        StringBuilder responseBody = new StringBuilder();
+        while ((inputLine = reader.readLine()) != null) {
+            responseBody.append(inputLine);
+        }
+        reader.close();
+
+        // Set response object body
+        serviceResponse.setResponseBody(responseBody.toString());
+    }
+
+    private void storeResponseContentBinary(InputStream inputStream,
+                                            ServiceResponse serviceResponse) throws IOException {
+        serviceResponse.setContentStream(inputStream);
     }
 
     private URL getResourceURL(String methodName) throws MalformedURLException {

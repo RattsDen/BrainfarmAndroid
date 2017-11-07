@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 
 import ca.brainfarm.R;
 import ca.brainfarm.data.Comment;
+import ca.brainfarm.data.ContributionFile;
+import ca.brainfarm.data.SynthesisJunction;
 
 /**
  * Created by Eric Thompson on 2017-09-18.
@@ -33,6 +35,8 @@ public class CommentLayout extends RelativeLayout {
     private TextView lblRibbonContrib;
     private TextView lblCommentBody;
     private Button btnCommentOptions;
+    private LinearLayout synthesisLinkContainer;
+    private LinearLayout attachmentContainer;
     private LinearLayout commentContentContainer;
     private LinearLayout childCommentContainer;
 
@@ -59,8 +63,13 @@ public class CommentLayout extends RelativeLayout {
         lblRibbonContrib = (TextView)findViewById(R.id.lblRibbonContrib);
         lblCommentBody = (TextView)findViewById(R.id.lblCommentBody);
         btnCommentOptions = (Button)findViewById(R.id.btnCommentOptions);
+        synthesisLinkContainer = (LinearLayout)findViewById(R.id.synthesisLinkContainer);
+        attachmentContainer = (LinearLayout)findViewById(R.id.attachmentContainer);
         commentContentContainer = (LinearLayout)findViewById(R.id.commentContentContainer);
         childCommentContainer = (LinearLayout)findViewById(R.id.childCommentContainer);
+
+        // Set tag for easily finding this view by comment ID later
+        setTag(comment.commentID);
 
         setComponentValues();
         setupListeners();
@@ -94,6 +103,7 @@ public class CommentLayout extends RelativeLayout {
                 lblRibbonSynth.setVisibility(VISIBLE);
                 commentContentContainer.setBackgroundColor(
                         ContextCompat.getColor(getContext(), R.color.commentBackgroundSynth));
+                createSynthesisLinks();
             }
             if (comment.isSpecification) {
                 lblRibbonSpec.setVisibility(VISIBLE);
@@ -104,6 +114,7 @@ public class CommentLayout extends RelativeLayout {
                 lblRibbonContrib.setVisibility(VISIBLE);
                 commentContentContainer.setBackgroundColor(
                         ContextCompat.getColor(getContext(), R.color.commentBackgroundContrib));
+                createContributionLinks();
             }
 
             lblCommentBody.setText(comment.bodyText);
@@ -115,6 +126,49 @@ public class CommentLayout extends RelativeLayout {
         }
 
 
+    }
+
+    private void createSynthesisLinks() {
+        for (SynthesisJunction synthesisJunction : comment.syntheses) {
+
+            // Need a final variable to be referenced inside the event listener
+            final SynthesisJunction synthesisJunctionRef = synthesisJunction;
+
+            TextView synthesisView = new TextView(getContext());
+            synthesisView.setText("#" + synthesisJunction.linkedCommentID
+                    + " " + synthesisJunction.subject);
+            synthesisView.setTextColor(
+                    ContextCompat.getColor(getContext(), R.color.ribbonSynth));
+            synthesisView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.synthesisLinkPressed(CommentLayout.this, synthesisJunctionRef);
+                }
+            });
+
+            synthesisLinkContainer.addView(synthesisView);
+        }
+    }
+
+    private void createContributionLinks() {
+        for (ContributionFile contributionFile : comment.contributionFiles) {
+
+            // Need a final variable to be referenced inside the event listener
+            final ContributionFile contributionFileRef = contributionFile;
+
+            TextView contributionView = new TextView(getContext());
+            contributionView.setText(contributionFile.filename);
+            contributionView.setTextColor(
+                    ContextCompat.getColor(getContext(), R.color.ribbonContrib));
+            contributionView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.contributionLinkPressed(CommentLayout.this, contributionFileRef);
+                }
+            });
+
+            attachmentContainer.addView(contributionView);
+        }
     }
 
     private void createChildCommentViews() {

@@ -101,26 +101,52 @@
             android:id="@+id/commentContentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/lblCommentBody"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:maxLines="100"
-                android:paddingBottom="15px"
-                android:paddingLeft="5px"
-                android:paddingRight="5px"
-                android:paddingTop="15px"
-                tools:text="Lorem ipsum dolar sit amet..." />
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnCommentOptions"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/ic_more_vert_white_24dp"
-                android:backgroundTint="@color/colorGreyTransparent" />
+                <TextView
+                    android:id="@+id/lblCommentBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="100"
+                    android:paddingBottom="15px"
+                    android:paddingLeft="5px"
+                    android:paddingRight="5px"
+                    android:paddingTop="15px"
+                    tools:text="Lorem ipsum dolar sit amet..." />
+
+                <Button
+                    android:id="@+id/btnCommentOptions"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/ic_more_vert_white_24dp"
+                    android:backgroundTint="@color/colorGreyTransparent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/synthesisLinkContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/attachmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"></LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
