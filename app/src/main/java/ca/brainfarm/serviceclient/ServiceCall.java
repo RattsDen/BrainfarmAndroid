@@ -127,6 +127,8 @@ public class ServiceCall {
                     }
                 } catch (ServiceFaultException ex) {
                     faultHandler.handleFault(ex);
+                } catch (Exception ex) {
+                    exceptionHandler.handleException(ex);
                 }
             } else {
                 //onCommunicationError(sendingException);

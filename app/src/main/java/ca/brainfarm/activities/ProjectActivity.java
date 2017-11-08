@@ -1,5 +1,6 @@
 package ca.brainfarm.activities;
 
+import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -57,6 +58,8 @@ public class ProjectActivity extends BaseBrainfarmActivity
 
     private ReplyBoxLayout currentReplyBox;
 
+    private ArrayList<Integer> bookmarkedCommentIDs = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,11 +101,37 @@ public class ProjectActivity extends BaseBrainfarmActivity
             @Override
             public void handleSuccess(Comment[] result) {
                 layoutComments(result);
+                // If logged in get bookmarks
+                if (UserSessionManager.getInstance().getLoginToken() != null) {
+                    getBookmarksFromService();
+                }
             }
         }, new FaultHandler() {
             @Override
             public void handleFault(ServiceFaultException ex) {
                 Log.e("ProjectActivity", "Fault exception", ex);
+            }
+        });
+    }
+
+    private void getBookmarksFromService() {
+        ServiceCall serviceCall = new ServiceCall("GetBookmarksForProject");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("projectID", projectID);
+        serviceCall.execute(int[].class, new SuccessHandler<int[]>() {
+            @Override
+            public void handleSuccess(int[] result) {
+                for (int id : result) {
+                    // Add id to list
+                    bookmarkedCommentIDs.add(id);
+                    // Set bookmark label to visible
+                    ((CommentLayout)commentContainer.findViewWithTag(id)).setBookmarkVisible(true);
+                }
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+
             }
         });
     }
@@ -151,8 +180,42 @@ public class ProjectActivity extends BaseBrainfarmActivity
     }
 
     @Override
-    public void bookmarkPressed(CommentLayout commentView) {
+    public void bookmarkPressed(final CommentLayout commentView) {
+        ServiceCall serviceCall = new ServiceCall("BookmarkComment");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("commentID", commentView.getComment().commentID);
+        serviceCall.execute(Void.class, new SuccessHandler<Void>() {
+            @Override
+            public void handleSuccess(Void result) {
+                bookmarkedCommentIDs.add(commentView.getComment().commentID);
+                commentView.setBookmarkVisible(true);
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
+    public void unbookmarkPressed(final CommentLayout commentView) {
+        ServiceCall serviceCall = new ServiceCall("UnbookmarkComment");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("commentID", commentView.getComment().commentID);
+        serviceCall.execute(Void.class, new SuccessHandler<Void>() {
+            @Override
+            public void handleSuccess(Void result) {
+                // Casting an int to Integer causes the remove(Object o) method to be called
+                //instead of the remove(int index) method
+                bookmarkedCommentIDs.remove((Integer)commentView.getComment().commentID);
+                commentView.setBookmarkVisible(false);
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -183,6 +246,14 @@ public class ProjectActivity extends BaseBrainfarmActivity
             menuCommentSynth.setVisible(true);
         }
 
+        // If comment is bookmarked, show "Unbookmark" item instead
+        if (bookmarkedCommentIDs.contains(commentView.getComment().commentID)) {
+            MenuItem menuCommentBookmark = menu.findItem(R.id.menu_comment_bookmark);
+            MenuItem menuCommentUnbookmark = menu.findItem(R.id.menu_comment_unbookmark);
+            menuCommentBookmark.setVisible(false);
+            menuCommentUnbookmark.setVisible(true);
+        }
+
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -192,6 +263,9 @@ public class ProjectActivity extends BaseBrainfarmActivity
                         break;
                     case R.id.menu_comment_bookmark:
                         bookmarkPressed(commentView);
+                        break;
+                    case R.id.menu_comment_unbookmark:
+                        unbookmarkPressed(commentView);
                         break;
                     case R.id.menu_comment_edit:
                         editPressed(commentView);

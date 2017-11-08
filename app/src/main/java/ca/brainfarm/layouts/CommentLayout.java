@@ -28,6 +28,7 @@ public class CommentLayout extends RelativeLayout {
 
     private TextView lblUsername;
     private TextView lblCreateDate;
+    private TextView lblBookmark;
     private TextView lblCommentID;
     private TextView lblRibbonProject;
     private TextView lblRibbonSynth;
@@ -56,6 +57,7 @@ public class CommentLayout extends RelativeLayout {
         // Get component references
         lblUsername = (TextView)findViewById(R.id.lblUsername);
         lblCreateDate = (TextView)findViewById(R.id.lblCreateDate);
+        lblBookmark = (TextView)findViewById(R.id.lblBookmark);
         lblCommentID = (TextView)findViewById(R.id.lblCommentID);
         lblRibbonProject = (TextView)findViewById(R.id.lblRibbonProject);
         lblRibbonSynth = (TextView)findViewById(R.id.lblRibbonSynth);
@@ -185,5 +187,9 @@ public class CommentLayout extends RelativeLayout {
 
     public void addReplyBox(ReplyBoxLayout replyBoxLayout) {
         childCommentContainer.addView(replyBoxLayout, 0);
+    }
+
+    public void setBookmarkVisible(boolean visible) {
+        lblBookmark.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 }

@@ -40,9 +40,20 @@
                 tools:text="at 1970-01-01 12:00 AM"/>
 
             <TextView
+                android:id="@+id/lblBookmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Bookmarked"
+                android:textColor="@color/colorWhite"
+                android:textSize="10sp"
+                android:visibility="invisible" />
+
+            <TextView
                 android:id="@+id/lblCommentID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5px"
                 android:layout_weight="0"
                 android:textColor="@color/colorWhite"
                 tools:text="#1" />
