@@ -3,15 +3,13 @@ package ca.brainfarm.data;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Eric Thompson on 2017-04-29.
+ * Created by Eric Thompson on 2017-11-03.
  */
 
-public class ContributionFile {
+public class FileAttachmentRequest {
 
     @SerializedName("ContributionFileID")
     public int contributionFileID;
-    @SerializedName("CommentID")
-    public Integer commentID;
     @SerializedName("Filename")
     public String filename;
 

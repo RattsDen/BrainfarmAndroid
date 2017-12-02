@@ -8,6 +8,7 @@
     tools:context="ca.brainfarm.activities.ProjectActivity">
 
     <ScrollView
+        android:id="@+id/pageScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

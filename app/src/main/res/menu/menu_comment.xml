@@ -3,11 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_comment_synth"
+        android:visible="false"
+        android:title="Synthesize" />
+    <item
         android:id="@+id/menu_comment_reply"
         android:title="@string/menu_comment_reply" />
     <item
         android:id="@+id/menu_comment_bookmark"
         android:title="@string/menu_comment_bookmark" />
+    <item
+        android:id="@+id/menu_comment_unbookmark"
+        android:visible="false"
+        android:title="Unbookmark" />
     <item
         android:id="@+id/menu_comment_edit"
         android:visible="false"

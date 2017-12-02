@@ -14,6 +14,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -30,7 +31,7 @@ class ServiceResponse {
 
     public int responseCode;
     private String responseBody;
-
+    private InputStream contentStream;
 
     public boolean isSuccess() {
         return responseCode == 200;
@@ -40,7 +41,7 @@ class ServiceResponse {
         return responseBody;
     }
 
-    public void setResponseBody(String responseBody) {
+    void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
     }
 
@@ -51,6 +52,18 @@ class ServiceResponse {
                     .registerTypeAdapter(Calendar.class, new DateDeserializer())
                     .create()
                     .fromJson(responseBody, type);
+        } else {
+            throw getException();
+        }
+    }
+
+    void setContentStream(InputStream contentStream) {
+        this.contentStream = contentStream;
+    }
+
+    public InputStream getContentStream() throws ServiceFaultException {
+        if (isSuccess()) {
+            return contentStream;
         } else {
             throw getException();
         }
