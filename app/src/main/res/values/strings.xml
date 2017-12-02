@@ -25,7 +25,11 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_create_project">Create Project</string>
     <string name="button_search_projects">Search Projects</string>
+    <string name="button_search">Search</string>
     <string name="button_wait">Loading. Please wait…</string>
+
+    <string name="button_search_title">Project title</string>
+    <string name="button_search_tags">Project tags</string>
 
     <string name="warn_password_match">Password fields must match</string>
 

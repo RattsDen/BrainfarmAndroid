@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:padding="10px"
                 android:text="Loading discussion..."
-                android:textSize="24dp"
+                android:textSize="24sp"
                 tools:text="Project Title" />
 
             <LinearLayout
