@@ -8,4 +8,46 @@
     style="@style/AppActivityLayoutStyle"
     tools:context="ca.brainfarm.activities.LoginActivity">
 
+    <Button
+        android:id="@+id/btnLogin"
+        style="@style/AppButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/button_login" />
+
+    <Button
+        android:id="@+id/btnCreateProject"
+        style="@style/AppButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/button_create_project" />
+
+    <Button
+        android:id="@+id/btnSearchProjects"
+        style="@style/AppButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/button_search_projects" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/dashboardTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+    </android.support.design.widget.TabLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/tabContentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 </LinearLayout>

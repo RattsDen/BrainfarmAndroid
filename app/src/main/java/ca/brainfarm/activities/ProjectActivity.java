@@ -167,7 +167,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
         });
     }
 
-    @Override
     public void replyPressed(CommentLayout commentView) {
         // Remove old reply box if there is one
         if (currentReplyBox != null) {
@@ -179,7 +178,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
         commentView.addReplyBox(currentReplyBox);
     }
 
-    @Override
     public void bookmarkPressed(final CommentLayout commentView) {
         ServiceCall serviceCall = new ServiceCall("BookmarkComment");
         serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
@@ -282,7 +280,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
         });
     }
 
-    @Override
     public void synthesizePressed(CommentLayout commentView) {
         if (currentReplyBox != null) {
             SynthesisRequest synthesisRequest = new SynthesisRequest();
@@ -304,7 +301,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
         downloader.startDownload();
     }
 
-    @Override
     public void editPressed(CommentLayout commentView) {
         // Remove old reply box if there is one
         if (currentReplyBox != null) {
@@ -316,7 +312,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
         commentView.addReplyBox(currentReplyBox);
     }
 
-    @Override
     public void deletePressed(CommentLayout commentView) {
         final String sessionToken = UserSessionManager.getInstance().getLoginToken();
         final int commentId = commentView.getComment().commentID;
