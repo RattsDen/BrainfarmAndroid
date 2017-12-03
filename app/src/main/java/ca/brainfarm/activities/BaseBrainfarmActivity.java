@@ -59,6 +59,10 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
             case R.id.menu_search:
                 searchProjectssMenuItemPressed();
                 break;
+
+            case R.id.menu_account:
+                accountMenuItemPressed();
+                break;
         }
         return true;
     }
@@ -105,6 +109,13 @@ public abstract class BaseBrainfarmActivity extends AppCompatActivity {
     protected void searchProjectssMenuItemPressed() {
         if (!(this instanceof SearchActivity)) { // If not already on Search activity
             Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    protected void accountMenuItemPressed() {
+        if (!(this instanceof ManageAccountActivity)) { // If not already on Account activity
+            Intent intent = new Intent(this, ManageAccountActivity.class);
             startActivity(intent);
         }
     }
