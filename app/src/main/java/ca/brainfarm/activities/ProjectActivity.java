@@ -50,6 +50,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
     private static int FILE_SELECT = 1; // Code for identifying intent carrying file select results
 
     private int projectID;
+    private Integer commentID;
 
     private TextView lblProjectTitle;
     private LinearLayout projectTagContainer;
@@ -67,6 +68,14 @@ public class ProjectActivity extends BaseBrainfarmActivity
 
         // Get project ID from intent
         projectID = getIntent().getExtras().getInt("projectID");
+
+        // Get ID of comment to scroll to once comments are loaded, if specified
+        // and if the activity was not just re-created (savedInstanceState == null)
+        if (getIntent().getExtras().containsKey("commentID")
+                && savedInstanceState == null) {
+            commentID = getIntent().getExtras().getInt("commentID");
+        }
+
 
         lblProjectTitle = (TextView)findViewById(R.id.lblProjectTitle);
         projectTagContainer = (LinearLayout)findViewById(R.id.projectTagContainer);
@@ -104,6 +113,10 @@ public class ProjectActivity extends BaseBrainfarmActivity
                 // If logged in get bookmarks
                 if (UserSessionManager.getInstance().getLoginToken() != null) {
                     getBookmarksFromService();
+                }
+                // If a commentID was specified in the intent scroll to it
+                if (commentID != null) {
+                    scrollToComment(commentID);
                 }
             }
         }, new FaultHandler() {
