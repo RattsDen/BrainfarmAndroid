@@ -48,4 +48,7 @@ public class Comment {
     @SerializedName("ContributionFiles")
     public ContributionFile[] contributionFiles;
 
+    @SerializedName("Score")
+    public Integer score;
+
 }

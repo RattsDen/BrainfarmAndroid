@@ -29,6 +29,7 @@ public class CommentLayout extends RelativeLayout {
     private TextView lblUsername;
     private TextView lblCreateDate;
     private TextView lblBookmark;
+    private TextView lblScore;
     private TextView lblCommentID;
     private TextView lblRibbonProject;
     private TextView lblRibbonSynth;
@@ -58,6 +59,7 @@ public class CommentLayout extends RelativeLayout {
         lblUsername = (TextView)findViewById(R.id.lblUsername);
         lblCreateDate = (TextView)findViewById(R.id.lblCreateDate);
         lblBookmark = (TextView)findViewById(R.id.lblBookmark);
+        lblScore = (TextView)findViewById(R.id.lblScore);
         lblCommentID = (TextView)findViewById(R.id.lblCommentID);
         lblRibbonProject = (TextView)findViewById(R.id.lblRibbonProject);
         lblRibbonSynth = (TextView)findViewById(R.id.lblRibbonSynth);
@@ -120,6 +122,8 @@ public class CommentLayout extends RelativeLayout {
             }
 
             lblCommentBody.setText(comment.bodyText);
+
+            setScoreDisplay(comment.score);
         }
         else{
             lblUsername.setText("[COMMENT REMOVED]");
@@ -195,5 +199,14 @@ public class CommentLayout extends RelativeLayout {
 
     public void setBookmarkVisible(boolean visible) {
         lblBookmark.setVisibility(visible ? VISIBLE : INVISIBLE);
+    }
+
+    public void setScoreDisplay(int score) {
+        if (score == 0) {
+            lblScore.setVisibility(GONE);
+        } else {
+            lblScore.setVisibility(VISIBLE);
+            lblScore.setText(Integer.toString(score));
+        }
     }
 }

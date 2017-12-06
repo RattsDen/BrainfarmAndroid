@@ -24,10 +24,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ca.brainfarm.ContributionFileDownloader;
+import ca.brainfarm.data.Bookmark;
 import ca.brainfarm.data.ContributionFile;
 import ca.brainfarm.data.FileAttachmentRequest;
+import ca.brainfarm.data.Rating;
 import ca.brainfarm.data.SynthesisJunction;
 import ca.brainfarm.data.SynthesisRequest;
 import ca.brainfarm.data.User;
@@ -60,6 +63,7 @@ public class ProjectActivity extends BaseBrainfarmActivity
     private ReplyBoxLayout currentReplyBox;
 
     private ArrayList<Integer> bookmarkedCommentIDs = new ArrayList<>();
+    private ArrayList<Rating> userRatings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,9 +114,10 @@ public class ProjectActivity extends BaseBrainfarmActivity
             @Override
             public void handleSuccess(Comment[] result) {
                 layoutComments(result);
-                // If logged in get bookmarks
+                // If logged in get bookmarks and ratings
                 if (UserSessionManager.getInstance().getLoginToken() != null) {
                     getBookmarksFromService();
+                    getRatingsFromService();
                 }
                 // If a commentID was specified in the intent scroll to it
                 if (commentID != null) {
@@ -149,6 +154,37 @@ public class ProjectActivity extends BaseBrainfarmActivity
         });
     }
 
+    private void getRatingsFromService() {
+        ServiceCall serviceCall = new ServiceCall("GetUserRatings");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("projectID", projectID);
+        serviceCall.execute(Rating[].class, new SuccessHandler<Rating[]>() {
+            @Override
+            public void handleSuccess(Rating[] result) {
+                for (Rating rating : result) {
+                    userRatings.add(rating);
+                }
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+
+            }
+        });
+    }
+
+    private boolean isCommentBookmarked(int commentID) {
+        return bookmarkedCommentIDs.contains(commentID);
+    }
+
+    private boolean isCommentLiked(int commentID) {
+        for (int i = 0; i < userRatings.size(); i++) {
+            if (userRatings.get(i).commentID == commentID)
+                return true;
+        }
+        return false;
+    }
+
     private void displayProjectInfo(Project project) {
         lblProjectTitle.setText(project.title);
         for (String tag : project.tags) {
@@ -180,55 +216,6 @@ public class ProjectActivity extends BaseBrainfarmActivity
         });
     }
 
-    public void replyPressed(CommentLayout commentView) {
-        // Remove old reply box if there is one
-        if (currentReplyBox != null) {
-            ViewGroup replyBoxParent = (ViewGroup)currentReplyBox.getParent();
-            replyBoxParent.removeView(currentReplyBox);
-        }
-        // Create a new reply box and add it underneath the clicked comment layout
-        currentReplyBox = new ReplyBoxLayout(this, commentView.getComment(), this);
-        commentView.addReplyBox(currentReplyBox);
-    }
-
-    public void bookmarkPressed(final CommentLayout commentView) {
-        ServiceCall serviceCall = new ServiceCall("BookmarkComment");
-        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
-        serviceCall.addArgument("commentID", commentView.getComment().commentID);
-        serviceCall.execute(Void.class, new SuccessHandler<Void>() {
-            @Override
-            public void handleSuccess(Void result) {
-                bookmarkedCommentIDs.add(commentView.getComment().commentID);
-                commentView.setBookmarkVisible(true);
-            }
-        }, new FaultHandler() {
-            @Override
-            public void handleFault(ServiceFaultException ex) {
-                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void unbookmarkPressed(final CommentLayout commentView) {
-        ServiceCall serviceCall = new ServiceCall("UnbookmarkComment");
-        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
-        serviceCall.addArgument("commentID", commentView.getComment().commentID);
-        serviceCall.execute(Void.class, new SuccessHandler<Void>() {
-            @Override
-            public void handleSuccess(Void result) {
-                // Casting an int to Integer causes the remove(Object o) method to be called
-                //instead of the remove(int index) method
-                bookmarkedCommentIDs.remove((Integer)commentView.getComment().commentID);
-                commentView.setBookmarkVisible(false);
-            }
-        }, new FaultHandler() {
-            @Override
-            public void handleFault(ServiceFaultException ex) {
-                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     @Override
     public void createCommentOptionsPopupMenu(PopupMenu popup, final CommentLayout commentView) {
         popup.getMenuInflater().inflate(R.menu.menu_comment, popup.getMenu());
@@ -247,8 +234,10 @@ public class ProjectActivity extends BaseBrainfarmActivity
             // Current user is null - disable reply and bookmark options
             MenuItem menuCommentReply = menu.findItem(R.id.menu_comment_reply);
             MenuItem menuCommentBookmark = menu.findItem(R.id.menu_comment_bookmark);
+            MenuItem menuCommentLike = menu.findItem(R.id.menu_comment_like);
             menuCommentBookmark.setEnabled(false);
             menuCommentReply.setEnabled(false);
+            menuCommentLike.setEnabled(false);
         }
 
         // If in synthesis mode, make synthesize option visible
@@ -258,11 +247,19 @@ public class ProjectActivity extends BaseBrainfarmActivity
         }
 
         // If comment is bookmarked, show "Unbookmark" item instead
-        if (bookmarkedCommentIDs.contains(commentView.getComment().commentID)) {
+        if (isCommentBookmarked(commentView.getComment().commentID)) {
             MenuItem menuCommentBookmark = menu.findItem(R.id.menu_comment_bookmark);
             MenuItem menuCommentUnbookmark = menu.findItem(R.id.menu_comment_unbookmark);
             menuCommentBookmark.setVisible(false);
             menuCommentUnbookmark.setVisible(true);
+        }
+
+        // If comment is liked, show "Unlike" item instead
+        if (isCommentLiked(commentView.getComment().commentID)) {
+            MenuItem menuCommentLike = menu.findItem(R.id.menu_comment_like);
+            MenuItem menuCommentUnlike = menu.findItem(R.id.menu_comment_unlike);
+            menuCommentLike.setVisible(false);
+            menuCommentUnlike.setVisible(true);
         }
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -278,6 +275,12 @@ public class ProjectActivity extends BaseBrainfarmActivity
                     case R.id.menu_comment_unbookmark:
                         unbookmarkPressed(commentView);
                         break;
+                    case R.id.menu_comment_like:
+                        likePressed(commentView);
+                        break;
+                    case R.id.menu_comment_unlike:
+                        unlikePressed(commentView);
+                        break;
                     case R.id.menu_comment_edit:
                         editPressed(commentView);
                         break;
@@ -289,6 +292,100 @@ public class ProjectActivity extends BaseBrainfarmActivity
                         break;
                 }
                 return true;
+            }
+        });
+    }
+
+    public void replyPressed(CommentLayout commentView) {
+        // Remove old reply box if there is one
+        if (currentReplyBox != null) {
+            ViewGroup replyBoxParent = (ViewGroup)currentReplyBox.getParent();
+            replyBoxParent.removeView(currentReplyBox);
+        }
+        // Create a new reply box and add it underneath the clicked comment layout
+        currentReplyBox = new ReplyBoxLayout(this, commentView.getComment(), this);
+        commentView.addReplyBox(currentReplyBox);
+    }
+
+    public void bookmarkPressed(final CommentLayout commentView) {
+        ServiceCall serviceCall = new ServiceCall("BookmarkComment");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("commentID", commentView.getComment().commentID);
+        serviceCall.execute(Bookmark.class, new SuccessHandler<Bookmark>() {
+            @Override
+            public void handleSuccess(Bookmark result) {
+                bookmarkedCommentIDs.add(result.commentID);
+                commentView.setBookmarkVisible(true);
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void unbookmarkPressed(final CommentLayout commentView) {
+        ServiceCall serviceCall = new ServiceCall("UnbookmarkComment");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("commentID", commentView.getComment().commentID);
+        serviceCall.execute(Bookmark.class, new SuccessHandler<Bookmark>() {
+            @Override
+            public void handleSuccess(Bookmark result) {
+                // Casting an int to Integer causes the remove(Object o) method to be called
+                //instead of the remove(int index) method
+                bookmarkedCommentIDs.remove((Integer)result.commentID);
+                commentView.setBookmarkVisible(false);
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void likePressed(final CommentLayout commentView) {
+        ServiceCall serviceCall = new ServiceCall("AddRating");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("commentID", commentView.getComment().commentID);
+        serviceCall.execute(Rating.class, new SuccessHandler<Rating>() {
+            @Override
+            public void handleSuccess(Rating result) {
+                userRatings.add(result);
+                commentView.getComment().score += result.weight;
+                commentView.setScoreDisplay(commentView.getComment().score);
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void unlikePressed(final CommentLayout commentView) {
+        ServiceCall serviceCall = new ServiceCall("RemoveRating");
+        serviceCall.addArgument("sessionToken", UserSessionManager.getInstance().getLoginToken());
+        serviceCall.addArgument("commentID", commentView.getComment().commentID);
+        serviceCall.execute(Rating.class, new SuccessHandler<Rating>() {
+            @Override
+            public void handleSuccess(Rating result) {
+                // Remove rating from list.
+                // Can't use userRatings.remove(result) since the result object, and the one in the
+                // list aren't actually the same
+                for (int i = 0; i < userRatings.size(); i++) {
+                    if (userRatings.get(i).commentID == result.commentID) {
+                        userRatings.remove(i);
+                    }
+                }
+                commentView.getComment().score -= result.weight;
+                commentView.setScoreDisplay(commentView.getComment().score);
+            }
+        }, new FaultHandler() {
+            @Override
+            public void handleFault(ServiceFaultException ex) {
+                Toast.makeText(ProjectActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

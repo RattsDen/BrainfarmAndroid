@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:textColor="@color/colorWhite"
-                tools:text="at 1970-01-01 12:00 AM"/>
+                tools:text="at 1970-01-01 12:00 AM" />
 
             <TextView
                 android:id="@+id/lblBookmark"
@@ -48,6 +48,16 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="10sp"
                 android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/lblScore"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:drawableLeft="@drawable/star"
+                android:textColor="@color/colorWhite"
+                android:visibility="gone"
+                tools:text="0" />
 
             <TextView
                 android:id="@+id/lblCommentID"
