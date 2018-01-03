@@ -10,6 +10,13 @@
         android:id="@+id/menu_comment_reply"
         android:title="@string/menu_comment_reply" />
     <item
+        android:id="@+id/menu_comment_like"
+        android:title="@string/menu_comment_like" />
+    <item
+        android:id="@+id/menu_comment_unlike"
+        android:visible="false"
+        android:title="@string/menu_comment_unlike" />
+    <item
         android:id="@+id/menu_comment_bookmark"
         android:title="@string/menu_comment_bookmark" />
     <item

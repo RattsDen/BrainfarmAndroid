@@ -18,6 +18,8 @@
     <string name="menu_comment_reply">Reply</string>
     <string name="menu_comment_bookmark">Bookmark</string>
     <string name="menu_comment_unbookmark">Unbookmark</string>
+    <string name="menu_comment_like">Like</string>
+    <string name="menu_comment_unlike">Unlike</string>
 
     <string name="button_register">Register</string>
     <string name="button_login">Login</string>
