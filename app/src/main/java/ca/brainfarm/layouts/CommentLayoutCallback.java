@@ -14,15 +14,15 @@ import ca.brainfarm.data.SynthesisJunction;
 
 public interface CommentLayoutCallback {
 
-    void replyPressed(CommentLayout commentView);
+    //void replyPressed(CommentLayout commentView);
 
-    void editPressed(CommentLayout commentView);
+    //void editPressed(CommentLayout commentView);
 
-    void deletePressed(CommentLayout commentView);
+    //void deletePressed(CommentLayout commentView);
 
-    void bookmarkPressed(CommentLayout commentView);
+    //void bookmarkPressed(CommentLayout commentView);
 
-    void synthesizePressed(CommentLayout commentView);
+    //void synthesizePressed(CommentLayout commentView);
 
     void synthesisLinkPressed(CommentLayout commentView, SynthesisJunction synthesisJunction);
 

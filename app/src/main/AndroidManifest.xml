@@ -24,7 +24,8 @@
         <activity android:name=".activities.ProjectActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.CreateProjectActivity" />
-        <activity android:name=".activities.SearchActivity"></activity>
+        <activity android:name=".activities.SearchActivity" />
+        <activity android:name=".activities.ManageAccountActivity"></activity>
     </application>
 
 </manifest>

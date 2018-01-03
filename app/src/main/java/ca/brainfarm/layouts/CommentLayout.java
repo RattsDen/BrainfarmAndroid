@@ -131,45 +131,49 @@ public class CommentLayout extends RelativeLayout {
     }
 
     private void createSynthesisLinks() {
-        for (SynthesisJunction synthesisJunction : comment.syntheses) {
+        if (comment.syntheses != null) {
+            for (SynthesisJunction synthesisJunction : comment.syntheses) {
 
-            // Need a final variable to be referenced inside the event listener
-            final SynthesisJunction synthesisJunctionRef = synthesisJunction;
+                // Need a final variable to be referenced inside the event listener
+                final SynthesisJunction synthesisJunctionRef = synthesisJunction;
 
-            TextView synthesisView = new TextView(getContext());
-            synthesisView.setText("#" + synthesisJunction.linkedCommentID
-                    + " " + synthesisJunction.subject);
-            synthesisView.setTextColor(
-                    ContextCompat.getColor(getContext(), R.color.ribbonSynth));
-            synthesisView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.synthesisLinkPressed(CommentLayout.this, synthesisJunctionRef);
-                }
-            });
+                TextView synthesisView = new TextView(getContext());
+                synthesisView.setText("#" + synthesisJunction.linkedCommentID
+                        + " " + synthesisJunction.subject);
+                synthesisView.setTextColor(
+                        ContextCompat.getColor(getContext(), R.color.ribbonSynth));
+                synthesisView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callback.synthesisLinkPressed(CommentLayout.this, synthesisJunctionRef);
+                    }
+                });
 
-            synthesisLinkContainer.addView(synthesisView);
+                synthesisLinkContainer.addView(synthesisView);
+            }
         }
     }
 
     private void createContributionLinks() {
-        for (ContributionFile contributionFile : comment.contributionFiles) {
+        if (comment.contributionFiles != null) {
+            for (ContributionFile contributionFile : comment.contributionFiles) {
 
-            // Need a final variable to be referenced inside the event listener
-            final ContributionFile contributionFileRef = contributionFile;
+                // Need a final variable to be referenced inside the event listener
+                final ContributionFile contributionFileRef = contributionFile;
 
-            TextView contributionView = new TextView(getContext());
-            contributionView.setText(contributionFile.filename);
-            contributionView.setTextColor(
-                    ContextCompat.getColor(getContext(), R.color.ribbonContrib));
-            contributionView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.contributionLinkPressed(CommentLayout.this, contributionFileRef);
-                }
-            });
+                TextView contributionView = new TextView(getContext());
+                contributionView.setText(contributionFile.filename);
+                contributionView.setTextColor(
+                        ContextCompat.getColor(getContext(), R.color.ribbonContrib));
+                contributionView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callback.contributionLinkPressed(CommentLayout.this, contributionFileRef);
+                    }
+                });
 
-            attachmentContainer.addView(contributionView);
+                attachmentContainer.addView(contributionView);
+            }
         }
     }
 
